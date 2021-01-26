@@ -6,7 +6,7 @@
     "dataSources": [
       {
         "name": "EdFi ODS",
-        "connectionString": "Provider=SQLNCLI11;Data Source=edfipras12;Initial Catalog=EdFi_Prodv2_Ods_2020;Persist Security Info=true;User ID=ASRefresh_svc",
+        "connectionString": "Provider=SQLNCLI11;Data Source=(local);Initial Catalog=GrandBend-3.4;Persist Security Info=true;User ID=edfi",
         "impersonationMode": "impersonateServiceAccount",
         "annotations": [
           {
@@ -17,7 +17,7 @@
       },
       {
         "name": "PowerBI Database",
-        "connectionString": "Provider=SQLNCLI11;Data Source=edfipras12;Initial Catalog=PowerBI;User ID=ASRefresh_svc;Persist Security Info=true",
+        "connectionString": "Provider=SQLNCLI11;Data Source=(local);Initial Catalog=GrandBend-3.4;User ID=edfi;Persist Security Info=true",
         "impersonationMode": "impersonateServiceAccount",
         "annotations": [
           {
@@ -395,7 +395,7 @@
           {
             "type": "calculated",
             "name": "FSA Math Trend Direction Last Two Years",
-            "dataType": "string",
+            "dataType": "unknown",
             "isDataTypeInferred": true,
             "expression": [
               " ",
@@ -2625,9 +2625,8 @@
           },
           {
             "name": "GradeLevel",
-            "dataType": "int64",
+            "dataType": "string",
             "sourceColumn": "GradeLevel",
-            "formatString": "0",
             "sourceProviderType": "WChar"
           },
           {
@@ -2679,12 +2678,12 @@
           {
             "type": "calculated",
             "name": "Learning Gain Level",
-            "dataType": "double",
+            "dataType": "string",
             "isDataTypeInferred": true,
             "isHidden": true,
             "expression": [
-              "",
-              "",
+              "\"\"",
+              "/*",
               "var FilteredTable_LearningGains = FILTER(FSA_LearningGains,",
               "                      VALUE(StudentAssessmentScoreResult[Result]) >= VALUE(FSA_LearningGains[Min])",
               "                      && VALUE(StudentAssessmentScoreResult[Result]) <= VALUE(FSA_LearningGains[Max])",
@@ -2706,7 +2705,7 @@
               "return ",
               "IF(CONTAINSSTRING(StudentAssessmentScoreResult[AssessmentTitle],\"Algebra\") = TRUE() || CONTAINSSTRING(StudentAssessmentScoreResult[AssessmentTitle],\"Geometry\") = TRUE(),",
               "LearningGainAlgebraGeometry,",
-              "LearningGain)"
+              "LearningGain)*/"
             ]
           },
           {
@@ -2743,10 +2742,10 @@
           {
             "type": "calculated",
             "name": "LearningGainLevel",
-            "dataType": "double",
+            "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              "",
+              "\"\"/*",
               "IF(CONTAINSSTRING(StudentAssessmentScoreResult[AssessmentTitle],\"Algebra\") = TRUE() || CONTAINSSTRING(StudentAssessmentScoreResult[AssessmentTitle],\"Geometry\") = TRUE(),  ",
               "     CALCULATE(VALUES(FSA_LearningGains[LearningGainLevel]),FILTER(FSA_LearningGains,VALUE(StudentAssessmentScoreResult[Result]) >= VALUE(FSA_LearningGains[Min])",
               "                                                                                  && VALUE(StudentAssessmentScoreResult[Result]) <= VALUE(FSA_LearningGains[Max])",
@@ -2763,7 +2762,7 @@
               "             )",
               "",
               ")",
-              "",
+              "*/",
               "",
               "",
               "",
@@ -2778,7 +2777,7 @@
             "isDataTypeInferred": true,
             "isHidden": true,
             "expression": [
-              "",
+              "[AssessmentIdentifier]& \"^\" & ",
               "         [StudentUSI]",
               " & \"^\" & [StudentAssessmentIdentifier]"
             ]
@@ -2792,12 +2791,12 @@
           {
             "type": "calculated",
             "name": "Level Min at 0%",
-            "dataType": "int64",
+            "dataType": "string",
             "isDataTypeInferred": true,
             "isHidden": true,
             "expression": [
-              " ",
-              "",
+              " \"\"",
+              "/*",
               "IF([AchievementLevel] <> BLANK(),",
               "",
               "        IF(CONTAINSSTRING(StudentAssessmentScoreResult[AssessmentTitle],\"Algebra\") = TRUE() || CONTAINSSTRING(StudentAssessmentScoreResult[AssessmentTitle],\"Geometry\") = TRUE(),",
@@ -2811,18 +2810,18 @@
               "                                               FSA_LearningGains[ScoreLevel],StudentAssessmentScoreResult[AchievementLevel])",
               "        ),",
               "BLANK()",
-              ")"
+              ")*/"
             ]
           },
           {
             "type": "calculated",
             "name": "Level Max at 100%",
-            "dataType": "int64",
+            "dataType": "string",
             "isDataTypeInferred": true,
             "isHidden": true,
             "expression": [
-              " ",
-              "",
+              " \"\"",
+              "/*",
               "IF([AchievementLevel] <> BLANK(),",
               "",
               "        IF(CONTAINSSTRING(StudentAssessmentScoreResult[AssessmentTitle],\"Algebra\") = TRUE() || CONTAINSSTRING(StudentAssessmentScoreResult[AssessmentTitle],\"Geometry\") = TRUE(),",
@@ -2836,17 +2835,17 @@
               "                                               FSA_LearningGains[ScoreLevel],StudentAssessmentScoreResult[AchievementLevel]) + 1",
               "        ),",
               "BLANK()",
-              ")"
+              ")*/"
             ]
           },
           {
             "type": "calculated",
             "name": "Achievement Level %",
-            "dataType": "double",
+            "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              "",
-              "",
+              "\"\"",
+              "/*",
               "var LevelMin =  IF(CONTAINSSTRING(StudentAssessmentScoreResult[AssessmentTitle],\"Algebra\") = TRUE() || CONTAINSSTRING(StudentAssessmentScoreResult[AssessmentTitle],\"Geometry\") = TRUE(),",
               "                LOOKUPVALUE(FSA_LearningGains[Min],FSA_LearningGains[AssessmentTitle],StudentAssessmentScoreResult[AssessmentTitle],",
               "                                       FSA_LearningGains[SubLevel],\"Overall\",",
@@ -2876,9 +2875,8 @@
               "IF([Level Min at 0%] <> BLANK(),",
               "   [AchievementLevel] + point_Result/point_100_percent,",
               "   BLANK()",
-              "  )"
-            ],
-            "formatString": "0.00"
+              "  )*/"
+            ]
           },
           {
             "type": "calculated",
@@ -2926,8 +2924,8 @@
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              " ",
-              "",
+              "\"\" ",
+              "/*",
               "IF([LearningGainLevel] = 5 , \"Level 5\",",
               "IF([LearningGainLevel] = 4 , \"Level 4\",",
               "IF([LearningGainLevel] = 3 , \"Level 3\",",
@@ -2939,7 +2937,7 @@
               "IF([LearningGainLevel] = 1.2 , \"Level 1 Mid\",",
               "IF([LearningGainLevel] = 1.3 , \"Level 1 High\"",
               "",
-              "))))))))))"
+              "))))))))))*/"
             ]
           }
         ],
@@ -3145,7 +3143,7 @@
                 "      ,[EndDate]",
                 "      ,[LocalEducationAgencyId]",
                 "  FROM [bi].[uniform.StaffSectionAssociation]",
-                "WHERE LocalEducationAgencyId = 38"
+                "--WHERE LocalEducationAgencyId = 38"
               ],
               "dataSource": "EdFi ODS"
             },
@@ -3166,7 +3164,7 @@
                   "      ,[EndDate]",
                   "      ,[LocalEducationAgencyId]",
                   "  FROM [bi].[uniform.StaffSectionAssociation]",
-                  "WHERE LocalEducationAgencyId = 38</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                  "--WHERE LocalEducationAgencyId = 38</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
                 ]
               }
             ]
@@ -3189,7 +3187,7 @@
               "      ,[EndDate]",
               "      ,[LocalEducationAgencyId]",
               "  FROM [bi].[uniform.StaffSectionAssociation]",
-              "WHERE LocalEducationAgencyId = 38"
+              "--WHERE LocalEducationAgencyId = 38"
             ]
           },
           {
@@ -3216,7 +3214,7 @@
               "      ,[EndDate]",
               "      ,[LocalEducationAgencyId]",
               "  FROM [bi].[uniform.StaffSectionAssociation]",
-              "WHERE LocalEducationAgencyId = 38</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+              "--WHERE LocalEducationAgencyId = 38</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -3763,7 +3761,7 @@
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              "",
+              "[AssessmentIdentifier]& \"^\" & ",
               "         [StudentUSI]",
               " & \"^\" & [StudentAssessmentIdentifier]"
             ]
@@ -4015,7 +4013,7 @@
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              "",
+              "[AssessmentIdentifier]& \"^\" & ",
               "         [StudentUSI]",
               " & \"^\" & [StudentAssessmentIdentifier]"
             ]
@@ -4045,13 +4043,12 @@
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              "",
-              "IF(MID([AssessmentIdentifier],1,3) = \"FSA\", ",
+              "\"A\"/*IF(MID([AssessmentIdentifier],1,3) = \"FSA\", ",
               "LOOKUPVALUE(ObjectiveAssessmentIdentificationCode[ObjectiveContent],ObjectiveAssessmentIdentificationCode[IdentificationCode],[Objective],",
               "                                    ObjectiveAssessmentIdentificationCode[Category], \"FSA\"                                  ",
               "),",
               "BLANK()",
-              ")"
+              ")*/"
             ]
           },
           {
@@ -5355,7 +5352,7 @@
           {
             "type": "calculatedTableColumn",
             "name": "GradeLevel",
-            "dataType": "int64",
+            "dataType": "string",
             "isNameInferred": true,
             "isDataTypeInferred": true,
             "sourceColumn": "[GradeLevel]"
@@ -5399,7 +5396,7 @@
           {
             "type": "calculated",
             "name": "Achievement Level %",
-            "dataType": "double",
+            "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
               " ",
@@ -5446,7 +5443,7 @@
           {
             "type": "calculated",
             "name": "LearningGainLevel",
-            "dataType": "double",
+            "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
               " ",
