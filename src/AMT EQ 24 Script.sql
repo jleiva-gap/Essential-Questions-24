@@ -1,63 +1,7 @@
 USE [EdFi_Ods]
-GO
-/****** Object:  View [BI].[uniform.StaffSectionAssociation]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[uniform.StaffSectionAssociation]
-GO
-/****** Object:  View [BI].[amt.StudentSectionAssociation]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[amt.StudentSectionAssociation]
-GO
-/****** Object:  View [BI].[amt.StudentSchoolAssociation]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[amt.StudentSchoolAssociation]
-GO
-/****** Object:  View [BI].[amt.StudentProgramAssociation]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[amt.StudentProgramAssociation]
-GO
-/****** Object:  View [BI].[AMT.StudentAssessmentStudentObjectiveAssessmentScoreResult]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[AMT.StudentAssessmentStudentObjectiveAssessmentScoreResult]
-GO
-/****** Object:  View [BI].[amt.StudentAssessmentStudentObjectiveAssessmentPointsPossible]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[amt.StudentAssessmentStudentObjectiveAssessmentPointsPossible]
-GO
-/****** Object:  View [BI].[amt.StudentAssessmentScoreResult]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[amt.StudentAssessmentScoreResult]
-GO
-/****** Object:  View [BI].[amt.StudentAssessmentPerformanceLevel]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[amt.StudentAssessmentPerformanceLevel]
-GO
-/****** Object:  View [BI].[amt.Student]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[amt.Student]
-GO
-/****** Object:  View [BI].[amt.StaffSectionAssociation]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[amt.StaffSectionAssociation]
-GO
-/****** Object:  View [BI].[amt.StaffEducationOrganizationAssignmentAssociation]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[amt.StaffEducationOrganizationAssignmentAssociation]
-GO
-/****** Object:  View [BI].[amt.Staff]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[amt.Staff]
-GO
-/****** Object:  View [BI].[amt.Section]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[amt.Section]
-GO
-/****** Object:  View [BI].[amt.School]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[amt.School]
-GO
-/****** Object:  View [BI].[amt.Grade]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[amt.Grade]
-GO
-/****** Object:  View [BI].[amt.EducationOrganization]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP VIEW [BI].[amt.EducationOrganization]
-GO
-/****** Object:  UserDefinedFunction [BI].[eq24.YearStart]    Script Date: 1/29/2021 10:08:29 AM ******/
-DROP FUNCTION [BI].[eq24.YearStart]
-GO
-/****** Object:  UserDefinedFunction [BI].[eq24.YearStart]    Script Date: 1/29/2021 10:08:29 AM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 
-CREATE FUNCTION [BI].[eq24.YearStart]()
+
+CREATE OR ALTER FUNCTION [BI].[eq24.YearStart]()
 RETURNS @return TABLE ([YearStart] INT)
 AS
 BEGIN
@@ -72,7 +16,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [BI].[amt.EducationOrganization]
+CREATE OR ALTER VIEW [BI].[amt.EducationOrganization]
 AS
     SELECT 
            SchoolDim.SchoolKey AS EducationOrganizationId, 
@@ -88,7 +32,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [BI].[amt.Grade]
+CREATE OR ALTER VIEW [BI].[amt.Grade]
 AS
     SELECT 
            BeginDate.Date AS BeginDate, 
@@ -146,7 +90,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [BI].[amt.School]
+CREATE OR ALTER VIEW [BI].[amt.School]
 AS
     SELECT 
            SchoolDim.LocalEducationAgencyKey AS LocalEducationAgencyId, 
@@ -164,7 +108,7 @@ GO
 
 
 
-create VIEW [BI].[amt.Section]
+CREATE OR ALTER VIEW [BI].[amt.Section]
 AS
 
 SELECT s.[SchoolId]
@@ -192,7 +136,7 @@ GO
 
 
 
-Create VIEW [BI].[amt.Staff]
+CREATE OR ALTER VIEW [BI].[amt.Staff]
 AS
 
 SELECT s.StaffUSI
@@ -248,7 +192,7 @@ GO
 
 
 
-CREATE VIEW [BI].[amt.StaffEducationOrganizationAssignmentAssociation]
+CREATE OR ALTER VIEW [BI].[amt.StaffEducationOrganizationAssignmentAssociation]
 AS
 
 
@@ -285,7 +229,7 @@ GO
 
 
 
-CREATE VIEW [BI].[amt.StaffSectionAssociation]
+CREATE OR ALTER VIEW [BI].[amt.StaffSectionAssociation]
 AS
 SELECT [StaffUSI]
       ,''[ClassroomIdentificationCode]
@@ -311,7 +255,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-CREATE VIEW [BI].[amt.Student]
+CREATE OR ALTER VIEW [BI].[amt.Student]
 AS
     SELECT 
            null AS BirthDate, 
@@ -341,7 +285,7 @@ GO
 
 
 
-CREATE VIEW [BI].[amt.StudentAssessmentPerformanceLevel]
+CREATE OR ALTER VIEW [BI].[amt.StudentAssessmentPerformanceLevel]
 AS
     SELECT DISTINCT
            asmt_StudentAssessmentFact.AssessmentKey, 
@@ -379,7 +323,7 @@ GO
 
 
 
-CREATE VIEW [BI].[amt.StudentAssessmentScoreResult]
+CREATE OR ALTER VIEW [BI].[amt.StudentAssessmentScoreResult]
 AS
     SELECT DISTINCT
            asmt_StudentAssessmentFact.AssessmentKey, 
@@ -413,7 +357,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [BI].[amt.StudentAssessmentStudentObjectiveAssessmentPointsPossible]
+CREATE OR ALTER VIEW [BI].[amt.StudentAssessmentStudentObjectiveAssessmentPointsPossible]
 AS
     SELECT DISTINCT 
            asmt_StudentAssessmentObjectiveFact.AssessmentKey AS AssessmentIdentifier, 
@@ -442,7 +386,7 @@ GO
 
 
 
-CREATE VIEW [BI].[AMT.StudentAssessmentStudentObjectiveAssessmentScoreResult]
+CREATE OR ALTER VIEW [BI].[AMT.StudentAssessmentStudentObjectiveAssessmentScoreResult]
 AS
     SELECT DISTINCT 
            asmt_StudentAssessmentObjectiveFact.AssessmentKey AS AssessmentIdentifier, 
@@ -469,7 +413,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [BI].[amt.StudentProgramAssociation]
+CREATE OR ALTER VIEW [BI].[amt.StudentProgramAssociation]
 AS
     SELECT 
            CONCAT(student.StudentUniqueId, '-', SchoolId) AS [StudentUSI], 
@@ -506,7 +450,7 @@ GO
 
 
 
-CREATE VIEW [BI].[amt.StudentSchoolAssociation] 
+CREATE OR ALTER VIEW [BI].[amt.StudentSchoolAssociation] 
 
 AS
 SELECT 
@@ -538,7 +482,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [BI].[amt.StudentSectionAssociation]
+CREATE OR ALTER VIEW [BI].[amt.StudentSectionAssociation]
 AS
     SELECT 
            CONCAT(StudentSectionDim.[StudentKey], '-', StudentSectionDim.[SchoolKey]) AS StudentUSI, 
@@ -571,7 +515,7 @@ GO
 
 
 
-CREATE VIEW [BI].[uniform.StaffSectionAssociation]
+CREATE OR ALTER VIEW [BI].[uniform.StaffSectionAssociation]
 AS
 SELECT [StaffUSI]
       ,''[ClassroomIdentificationCode]
