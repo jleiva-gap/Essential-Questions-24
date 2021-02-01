@@ -1587,7 +1587,7 @@
         "columns": [
           {
             "name": "StudentUSI",
-            "dataType": "int64",
+            "dataType": "string",
             "sourceColumn": "StudentUSI",
             "sourceProviderType": "Integer"
           },
@@ -1729,7 +1729,14 @@
           {
             "name": "SectionBeginDate",
             "dataType": "dateTime",
-            "sourceColumn": "SectionBeginDate"
+            "sourceColumn": "SectionBeginDate",
+            "formatString": "Short Date",
+            "annotations": [
+              {
+                "name": "Format",
+                "value": "<Format Format=\"DateTimeShortDatePattern\" />"
+              }
+            ]
           },
           {
             "name": "SectionEndDate",
@@ -1740,6 +1747,11 @@
             "name": "Subject",
             "dataType": "string",
             "sourceColumn": "Subject"
+          },
+          {
+            "name": "GradingPeriodKey",
+            "dataType": "string",
+            "sourceColumn": "GradingPeriodKey"
           }
         ],
         "partitions": [
@@ -1767,6 +1779,7 @@
                 "Subject,",
                 "Term,",
                 "UniqueSectionCode",
+                ",GradingPeriodKey",
                 "",
                 "FROM [bi].[amt.Grade]"
               ],
@@ -1794,6 +1807,7 @@
                   "Subject,",
                   "Term,",
                   "UniqueSectionCode",
+                  ",GradingPeriodKey",
                   "",
                   "FROM [bi].[amt.Grade]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
                 ]
@@ -1823,6 +1837,7 @@
               "Subject,",
               "Term,",
               "UniqueSectionCode",
+              ",GradingPeriodKey",
               "",
               "FROM [bi].[amt.Grade]"
             ]
@@ -1856,6 +1871,7 @@
               "Subject,",
               "Term,",
               "UniqueSectionCode",
+              ",GradingPeriodKey",
               "",
               "FROM [bi].[amt.Grade]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
@@ -1868,24 +1884,23 @@
           {
             "type": "calculated",
             "name": "Subject",
-            "dataType": "string",
+            "dataType": "unknown",
             "isDataTypeInferred": true,
             "expression": [
-              "\"\"/*GROUPBY(Grade",
+              "GROUPBY(Grade",
               ",Grade[StudentUSI]",
-              "--,Grade[SchoolYear]",
-              ",Grade[LocalCourseCode]",
-              ",Grade[LocalEducationAgencyId])*/",
-              ""
+              ",Grade[SchoolYear]",
+              ",Grade[LocalCourseCode],Grade[LocalEducationAgencyId],Grade[GradingPeriodkey],\"SectionBeginDate\",MAXX(CURRENTGROUP(),Grade[SectionBeginDate])",
+              ")"
             ]
           },
           {
             "type": "calculated",
             "name": "T1",
-            "dataType": "string",
+            "dataType": "unknown",
             "isDataTypeInferred": true,
             "expression": [
-              "\"\"/*",
+              "",
               "LOOKUPVALUE(Grade[Grade *], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            --Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
               "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
@@ -1893,7 +1908,7 @@
               "                            Grade[GradeType],\"Grading Period\",",
               "                            Grade[GradingPeriod], \"First Nine Weeks\",",
               "                            Grade[Subject],StudentCourseCurrent[Subject]",
-              "           )*/"
+              "           )"
             ]
           },
           {
@@ -1984,12 +1999,11 @@
           {
             "type": "calculated",
             "name": "FIN *",
-            "dataType": "string",
+            "dataType": "double",
             "isDataTypeInferred": true,
             "isHidden": true,
             "expression": [
-              "\"\"",
-              "/*",
+              "",
               "var CountValue = (4 - ISBLANK([T1]) - ISBLANK([T2])- ISBLANK([T3])- ISBLANK([T4]))",
               "",
               "var CountValueSemester = (2 - ISBLANK([S1]) - ISBLANK([S2]))",
@@ -2026,7 +2040,7 @@
               "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
               "                            Grade[GradingPeriod], \"End of Year\"",
               "           )",
-              "  )*/"
+              "  )"
             ]
           },
           {
@@ -2036,7 +2050,7 @@
             "isDataTypeInferred": true,
             "isHidden": true,
             "expression": [
-              "\"\"/*",
+              "",
               "IF([FIN *] = 9500,\"A\",",
               "IF([FIN *] = 8500,\"B\",",
               "IF([FIN *] = 7500,\"C\",",
@@ -2059,33 +2073,32 @@
               "IF([FIN *] = 608, \"U\",",
               "",
               "FORMAT([FIN *],\"General number\"",
-              ")))))))))))))))))))))*/"
+              ")))))))))))))))))))))"
             ]
           },
           {
             "type": "calculated",
             "name": "SectionEndDate",
-            "dataType": "int64",
+            "dataType": "string",
             "isDataTypeInferred": true,
             "isHidden": true,
             "expression": [
-              "",
+              "\"\"",
               "/*",
               "LOOKUPVALUE(Grade[SectionEndDate],",
               "            Grade[StudentUSI],StudentCourseCurrent[StudentUSI],",
               "            Grade[SchoolYear],StudentCourseCurrent[SchoolYear],",
               "Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
-              "Grade[Term],StudentCourseCurrent[Term],",
+              "",
               "Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
-              "Grade[UniqueSectionCode], StudentCourseCurrent[UniqueSectionCode],",
-              "Grade[LocalEducationAgencyId],StudentCourseCurrent[LocalEducationAgencyId])",
-              "*/"
+              "Grade[LocalEducationAgencyId],StudentCourseCurrent[LocalEducationAgencyId])*/",
+              ""
             ]
           },
           {
             "type": "calculatedTableColumn",
             "name": "StudentUSI",
-            "dataType": "int64",
+            "dataType": "string",
             "isNameInferred": false,
             "isDataTypeInferred": true,
             "sourceColumn": "Grade[StudentUSI]"

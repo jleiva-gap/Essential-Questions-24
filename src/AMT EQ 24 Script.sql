@@ -105,7 +105,7 @@ AS
            COALESCE(StudentSectionStartDate.Date,CAST(StudentSectionDim.StudentSectionStartDateKey AS DATETIME)) AS SectionBeginDate, 
            COALESCE(StudentSectionEndDate.Date,CAST(StudentSectionDim.StudentSectionEndDateKey AS DATETIME)) AS SectionEndDate, 
            '' AS SequenceOfCourse, 
-           StudentSectionDim.StudentKey AS StudentUSI, 
+           CONCAT(StudentSectionDim.StudentKey,'-',SchoolDim.SchoolKey) AS StudentUSI, 
            StudentSectionDim.Subject AS Subject, 
            '' AS Term, 
            '' AS UniqueSectionCode, 
