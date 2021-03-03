@@ -80,12 +80,6 @@
             "sourceProviderType": "Boolean"
           },
           {
-            "name": "OldEthnicityTypeId",
-            "dataType": "int64",
-            "sourceColumn": "OldEthnicityTypeId",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "EconomicDisadvantaged",
             "dataType": "int64",
             "sourceColumn": "EconomicDisadvantaged",
@@ -182,7 +176,7 @@
           },
           {
             "type": "calculated",
-            "name": "FSA Math LastYearSubLevel",
+            "name": "Math LastYearSubLevel",
             "dataType": "double",
             "isDataTypeInferred": true,
             "expression": [
@@ -210,7 +204,7 @@
           },
           {
             "type": "calculated",
-            "name": "FSA Math PreviousYearSubLevel",
+            "name": "Math PreviousYearSubLevel",
             "dataType": "double",
             "isDataTypeInferred": true,
             "expression": [
@@ -238,27 +232,27 @@
           },
           {
             "type": "calculated",
-            "name": "Flag FSA MAth LearningGain",
+            "name": "Flag Math LearningGain",
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
               "",
-              "IF([FSA Math LastYearSubLevel] <> BLANK()",
-              "    && [FSA Math PreviousYearSubLevel] <> BLANK()",
-              "    && [FSA Math LastYearSubLevel] > [FSA Math PreviousYearSubLevel], \"+ improved\",",
-              "IF([FSA Math LastYearSubLevel] <> BLANK()",
-              "    && [FSA Math PreviousYearSubLevel] <> BLANK()",
-              "    && [FSA Math LastYearSubLevel] < [FSA Math PreviousYearSubLevel], \"- regressed\",",
-              "IF([FSA Math LastYearSubLevel] <> BLANK()",
-              "    && [FSA Math PreviousYearSubLevel] <> BLANK()",
-              "    && [FSA Math LastYearSubLevel] = [FSA Math PreviousYearSubLevel], \"0 stable\",",
+              "IF([Math LastYearSubLevel] <> BLANK()",
+              "    && [Math PreviousYearSubLevel] <> BLANK()",
+              "    && [Math LastYearSubLevel] > [Math PreviousYearSubLevel], \"+ improved\",",
+              "IF([Math LastYearSubLevel] <> BLANK()",
+              "    && [Math PreviousYearSubLevel] <> BLANK()",
+              "    && [Math LastYearSubLevel] < [Math PreviousYearSubLevel], \"- regressed\",",
+              "IF([Math LastYearSubLevel] <> BLANK()",
+              "    && [Math PreviousYearSubLevel] <> BLANK()",
+              "    && [Math LastYearSubLevel] = [Math PreviousYearSubLevel], \"0 stable\",",
               "BLANK()",
               ")))"
             ]
           },
           {
             "type": "calculated",
-            "name": "FSA Math LastYearQuartile",
+            "name": "Math LastYearQuartile",
             "dataType": "double",
             "isDataTypeInferred": true,
             "expression": [
@@ -289,7 +283,7 @@
           },
           {
             "type": "calculated",
-            "name": "FSA Math PreviousYearQuartile",
+            "name": "Math PreviousYearQuartile",
             "dataType": "double",
             "isDataTypeInferred": true,
             "expression": [
@@ -319,7 +313,7 @@
           },
           {
             "type": "calculated",
-            "name": "FSA Math Trend Direction Last Two Years",
+            "name": "Math Trend Direction Last Two Years",
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
@@ -419,7 +413,7 @@
           },
           {
             "type": "calculated",
-            "name": "FSA Math Previous Year Achievement Level %",
+            "name": "Math Previous Year Achievement Level %",
             "dataType": "double",
             "isDataTypeInferred": true,
             "expression": [
@@ -445,7 +439,7 @@
           },
           {
             "type": "calculated",
-            "name": "FSA Math Last Year Achievement Level %",
+            "name": "Math Last Year Achievement Level %",
             "dataType": "double",
             "isDataTypeInferred": true,
             "expression": [
@@ -473,56 +467,56 @@
           },
           {
             "type": "calculated",
-            "name": "FSA Math LastYearSubLevelString",
+            "name": "Math LastYearSubLevelString",
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
               " ",
               "",
-              "IF([FSA Math LastYearSubLevel] = 5 , \"Level 5\",",
-              "IF([FSA Math LastYearSubLevel] = 4 , \"Level 4\",",
-              "IF([FSA Math LastYearSubLevel] = 3 , \"Level 3\",",
-              "IF([FSA Math LastYearSubLevel] = 3.1 , \"Level 3 Low\",",
-              "IF([FSA Math LastYearSubLevel] = 3.3 , \"Level 3 High\",",
-              "IF([FSA Math LastYearSubLevel] = 2.1 , \"Level 2 Low\",",
-              "IF([FSA Math LastYearSubLevel] = 2.3 , \"Level 2 High\",",
-              "IF([FSA Math LastYearSubLevel] = 1.1 , \"Level 1 Low\",",
-              "IF([FSA Math LastYearSubLevel] = 1.2 , \"Level 1 Mid\",",
-              "IF([FSA Math LastYearSubLevel] = 1.3 , \"Level 1 High\"",
+              "IF([Math LastYearSubLevel] = 5 , \"Level 5\",",
+              "IF([Math LastYearSubLevel] = 4 , \"Level 4\",",
+              "IF([Math LastYearSubLevel] = 3 , \"Level 3\",",
+              "IF([Math LastYearSubLevel] = 3.1 , \"Level 3 Low\",",
+              "IF([Math LastYearSubLevel] = 3.3 , \"Level 3 High\",",
+              "IF([Math LastYearSubLevel] = 2.1 , \"Level 2 Low\",",
+              "IF([Math LastYearSubLevel] = 2.3 , \"Level 2 High\",",
+              "IF([Math LastYearSubLevel] = 1.1 , \"Level 1 Low\",",
+              "IF([Math LastYearSubLevel] = 1.2 , \"Level 1 Mid\",",
+              "IF([Math LastYearSubLevel] = 1.3 , \"Level 1 High\"",
               "",
               "))))))))))"
             ]
           },
           {
             "type": "calculated",
-            "name": "FSA Math PreviousYearSubLevelString",
+            "name": "Math PreviousYearSubLevelString",
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
               " ",
-              "IF([FSA Math PreviousYearSubLevel] = 5 , \"Level 5\",",
-              "IF([FSA Math PreviousYearSubLevel] = 4 , \"Level 4\",",
-              "IF([FSA Math PreviousYearSubLevel] = 3 , \"Level 3\",",
-              "IF([FSA Math PreviousYearSubLevel] = 3.1 , \"Level 3 Low\",",
-              "IF([FSA Math PreviousYearSubLevel] = 3.3 , \"Level 3 High\",",
-              "IF([FSA Math PreviousYearSubLevel] = 2.1 , \"Level 2 Low\",",
-              "IF([FSA Math PreviousYearSubLevel] = 2.3 , \"Level 2 High\",",
-              "IF([FSA Math PreviousYearSubLevel] = 1.1 , \"Level 1 Low\",",
-              "IF([FSA Math PreviousYearSubLevel] = 1.2 , \"Level 1 Mid\",",
-              "IF([FSA Math PreviousYearSubLevel] = 1.3 , \"Level 1 High\"",
+              "IF([Math PreviousYearSubLevel] = 5 , \"Level 5\",",
+              "IF([Math PreviousYearSubLevel] = 4 , \"Level 4\",",
+              "IF([Math PreviousYearSubLevel] = 3 , \"Level 3\",",
+              "IF([Math PreviousYearSubLevel] = 3.1 , \"Level 3 Low\",",
+              "IF([Math PreviousYearSubLevel] = 3.3 , \"Level 3 High\",",
+              "IF([Math PreviousYearSubLevel] = 2.1 , \"Level 2 Low\",",
+              "IF([Math PreviousYearSubLevel] = 2.3 , \"Level 2 High\",",
+              "IF([Math PreviousYearSubLevel] = 1.1 , \"Level 1 Low\",",
+              "IF([Math PreviousYearSubLevel] = 1.2 , \"Level 1 Mid\",",
+              "IF([Math PreviousYearSubLevel] = 1.3 , \"Level 1 High\"",
               "",
               "))))))))))"
             ]
           },
           {
             "type": "calculated",
-            "name": "FSA Math Trend % Difference",
+            "name": "Math Trend % Difference",
             "dataType": "double",
             "isDataTypeInferred": true,
             "expression": [
               " ",
-              "IF([FSA Math Last Year Achievement Level %] <> BLANK() && [FSA Math Previous Year Achievement Level %] <> BLANK(),",
-              "                     [FSA Math Last Year Achievement Level %] - [FSA Math Previous Year Achievement Level %],",
+              "IF([Math Last Year Achievement Level %] <> BLANK() && [Math Previous Year Achievement Level %] <> BLANK(),",
+              "                     [Math Last Year Achievement Level %] - [Math Previous Year Achievement Level %],",
               "BLANK()",
               ")"
             ],
@@ -625,61 +619,56 @@
             ]
           },
           {
-            "name": "FSA Trend Last Two Years Improved",
+            "name": "Trend Last Two Years Improved",
             "expression": [
               "",
-              "",
-              "var filteredTable = FILTER(Student, [Flag FSA MAth LearningGain] = \"+ improved\")",
-              "var count_Rows = COUNTROWS(filteredTable)",
-              "",
-              "return",
-              "IF(count_Rows = BLANK(),0,count_Rows)"
+              "VAR filteredTable =",
+              "    FILTER ( Student, [Flag Math LearningGain] = \"+ improved\" )",
+              "VAR count_Rows =",
+              "    COUNTROWS ( filteredTable )",
+              "RETURN",
+              "    IF ( count_Rows = BLANK (), 0, count_Rows )"
             ]
           },
           {
-            "name": "FSA Trend Last Two Years Regressed",
+            "name": "Trend Last Two Years Regressed",
             "expression": [
               "",
-              "",
-              "var filteredTable = FILTER(Student, [Flag FSA MAth LearningGain] = \"- regressed\")",
-              "var count_Rows = COUNTROWS(filteredTable)",
-              "",
-              "return",
-              "IF(count_Rows = BLANK(),0,count_Rows)"
+              "VAR filteredTable =",
+              "    FILTER ( Student, [Flag Math LearningGain] = \"- regressed\" )",
+              "VAR count_Rows =",
+              "    COUNTROWS ( filteredTable )",
+              "RETURN",
+              "    IF ( count_Rows = BLANK (), 0, count_Rows )"
             ]
           },
           {
-            "name": "FSA Trend Last Two Years Stable",
+            "name": "Trend Last Two Years Stable",
             "expression": [
               "",
-              "",
-              "var filteredTable = FILTER(Student, [Flag FSA MAth LearningGain] = \"0 stable\")",
-              "var count_Rows = COUNTROWS(filteredTable)",
-              "",
-              "return",
-              "IF(count_Rows = BLANK(),0,count_Rows)"
+              "VAR filteredTable =",
+              "    FILTER ( Student, [Flag Math LearningGain] = \"0 stable\" )",
+              "VAR count_Rows =",
+              "    COUNTROWS ( filteredTable )",
+              "RETURN",
+              "    IF ( count_Rows = BLANK (), 0, count_Rows )"
             ]
           },
           {
-            "name": "FSA Trend Last Two Years Not Available",
+            "name": "Trend Last Two Years Not Available",
             "expression": [
               "",
-              "",
-              "var filteredTable = FILTER(Student, [Flag FSA MAth LearningGain] = BLANK())",
-              "var count_Rows = COUNTROWS(filteredTable)",
-              "",
-              "return",
-              "IF(count_Rows = BLANK(),0,count_Rows)"
+              "VAR filteredTable =",
+              "    FILTER ( Student, [Flag Math LearningGain] = BLANK () )",
+              "VAR count_Rows =",
+              "    COUNTROWS ( filteredTable )",
+              "RETURN",
+              "    IF ( count_Rows = BLANK (), 0, count_Rows )"
             ]
           },
           {
-            "name": "FSA Number of Students",
-            "expression": [
-              " ",
-              "",
-              "",
-              "[FSA Trend Last Two Years Improved]+[FSA Trend Last Two Years Regressed]+[FSA Trend Last Two Years Stable]+[FSA Trend Last Two Years Not Available]"
-            ]
+            "name": "Number of Students",
+            "expression": "[Trend Last Two Years Improved] + [Trend Last Two Years Regressed] + [Trend Last Two Years Stable] + [Trend Last Two Years Not Available]"
           }
         ],
         "annotations": [
@@ -5915,98 +5904,6 @@
             ]
           }
         ]
-      },
-      {
-        "name": "EducationOrganization",
-        "isHidden": true,
-        "columns": [
-          {
-            "name": "EducationOrganizationId",
-            "dataType": "int64",
-            "sourceColumn": "EducationOrganizationId",
-            "sourceProviderType": "Integer"
-          },
-          {
-            "name": "StateOrganizationId",
-            "dataType": "string",
-            "sourceColumn": "StateOrganizationId",
-            "sourceProviderType": "WChar"
-          },
-          {
-            "name": "NameOfInstitution",
-            "dataType": "string",
-            "sourceColumn": "NameOfInstitution",
-            "sourceProviderType": "WChar"
-          },
-          {
-            "name": "LocalEducationAgencyId",
-            "dataType": "int64",
-            "sourceColumn": "LocalEducationAgencyId"
-          }
-        ],
-        "partitions": [
-          {
-            "name": "EducationOrganization",
-            "dataView": "full",
-            "source": {
-              "type": "query",
-              "query": [
-                "SELECT [EducationOrganizationId]",
-                "      ,[StateOrganizationId]",
-                "      ,[NameOfInstitution]",
-                "      ,[LocalEducationAgencyId]",
-                "",
-                "FROM [bi].[amt.EducationOrganization]"
-              ],
-              "dataSource": "EdFi ODS"
-            },
-            "annotations": [
-              {
-                "name": "QueryEditorSerialization",
-                "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [EducationOrganizationId]",
-                  "      ,[StateOrganizationId]",
-                  "      ,[NameOfInstitution]",
-                  "      ,[LocalEducationAgencyId]",
-                  "",
-                  "FROM [bi].[amt.EducationOrganization]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
-                ]
-              }
-            ]
-          }
-        ],
-        "annotations": [
-          {
-            "name": "_TM_ExtProp_QueryDefinition",
-            "value": [
-              "SELECT [EducationOrganizationId]",
-              "      ,[StateOrganizationId]",
-              "      ,[NameOfInstitution]",
-              "      ,[LocalEducationAgencyId]",
-              "",
-              "FROM [bi].[amt.EducationOrganization]"
-            ]
-          },
-          {
-            "name": "_TM_ExtProp_DbTableName",
-            "value": "EWS.EducationOrganization"
-          },
-          {
-            "name": "_TM_ExtProp_DbSchemaName",
-            "value": "bi"
-          },
-          {
-            "name": "QueryEditorSerialization",
-            "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [EducationOrganizationId]",
-              "      ,[StateOrganizationId]",
-              "      ,[NameOfInstitution]",
-              "      ,[LocalEducationAgencyId]",
-              "",
-              "FROM [bi].[amt.EducationOrganization]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
-            ]
-          }
-        ]
       }
     ],
     "relationships": [
@@ -6237,6 +6134,5 @@
         "value": "400"
       }
     ]
-  },
-  "id": "SemanticModel"
+  }
 }
