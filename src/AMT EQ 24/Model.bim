@@ -29,98 +29,6 @@
     ],
     "tables": [
       {
-        "name": "EducationOrganization",
-        "isHidden": true,
-        "columns": [
-          {
-            "name": "EducationOrganizationId",
-            "dataType": "int64",
-            "sourceColumn": "EducationOrganizationId",
-            "sourceProviderType": "Integer"
-          },
-          {
-            "name": "StateOrganizationId",
-            "dataType": "string",
-            "sourceColumn": "StateOrganizationId",
-            "sourceProviderType": "WChar"
-          },
-          {
-            "name": "NameOfInstitution",
-            "dataType": "string",
-            "sourceColumn": "NameOfInstitution",
-            "sourceProviderType": "WChar"
-          },
-          {
-            "name": "LocalEducationAgencyId",
-            "dataType": "int64",
-            "sourceColumn": "LocalEducationAgencyId"
-          }
-        ],
-        "partitions": [
-          {
-            "name": "EducationOrganization",
-            "dataView": "full",
-            "source": {
-              "type": "query",
-              "query": [
-                "SELECT [EducationOrganizationId]",
-                "      ,[StateOrganizationId]",
-                "      ,[NameOfInstitution]",
-                "      ,[LocalEducationAgencyId]",
-                "",
-                "FROM [bi].[amt.EducationOrganization]"
-              ],
-              "dataSource": "EdFi ODS"
-            },
-            "annotations": [
-              {
-                "name": "QueryEditorSerialization",
-                "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [EducationOrganizationId]",
-                  "      ,[StateOrganizationId]",
-                  "      ,[NameOfInstitution]",
-                  "      ,[LocalEducationAgencyId]",
-                  "",
-                  "FROM [bi].[amt.EducationOrganization]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
-                ]
-              }
-            ]
-          }
-        ],
-        "annotations": [
-          {
-            "name": "_TM_ExtProp_QueryDefinition",
-            "value": [
-              "SELECT [EducationOrganizationId]",
-              "      ,[StateOrganizationId]",
-              "      ,[NameOfInstitution]",
-              "      ,[LocalEducationAgencyId]",
-              "",
-              "FROM [bi].[amt.EducationOrganization]"
-            ]
-          },
-          {
-            "name": "_TM_ExtProp_DbTableName",
-            "value": "EWS.EducationOrganization"
-          },
-          {
-            "name": "_TM_ExtProp_DbSchemaName",
-            "value": "bi"
-          },
-          {
-            "name": "QueryEditorSerialization",
-            "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [EducationOrganizationId]",
-              "      ,[StateOrganizationId]",
-              "      ,[NameOfInstitution]",
-              "      ,[LocalEducationAgencyId]",
-              "",
-              "FROM [bi].[amt.EducationOrganization]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
-            ]
-          }
-        ]
-      },
-      {
         "name": "Student",
         "columns": [
           {
@@ -128,7 +36,7 @@
             "dataType": "string",
             "sourceColumn": "StudentUSI",
             "sourceProviderType": "Integer"
-          }, 
+          },
           {
             "name": "FirstName",
             "dataType": "string",
@@ -244,6 +152,33 @@
               "return",
               "IF( FailCount > 0, 2, BLANK() )"
             ]
+          },
+          {
+            "type": "calculated",
+            "name": "Student Name",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": " [LastSurname] & \",\" & \" \" & [FirstName]"
+          },
+          {
+            "type": "calculated",
+            "name": "HispanicLatino",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": [
+              "",
+              "IF([HispanicLatinoEthnicity] = \"TRUE\",\"Yes\", \"No\")"
+            ]
+          },
+          {
+            "name": "Current Grade Level",
+            "dataType": "string",
+            "sourceColumn": "Current Grade Level"
+          },
+          {
+            "name": "Current School ID",
+            "dataType": "string",
+            "sourceColumn": "Current School ID"
           },
           {
             "type": "calculated",
@@ -381,13 +316,6 @@
               "",
               ""
             ]
-          },
-          {
-            "type": "calculated",
-            "name": "Student Name",
-            "dataType": "string",
-            "isDataTypeInferred": true,
-            "expression": " [LastSurname] & \",\" & \" \" & [FirstName]"
           },
           {
             "type": "calculated",
@@ -545,16 +473,6 @@
           },
           {
             "type": "calculated",
-            "name": "HispanicLatino",
-            "dataType": "string",
-            "isDataTypeInferred": true,
-            "expression": [
-              "",
-              "IF([HispanicLatinoEthnicity] = \"TRUE\",\"Yes\", \"No\")"
-            ]
-          },
-          {
-            "type": "calculated",
             "name": "FSA Math LastYearSubLevelString",
             "dataType": "string",
             "isDataTypeInferred": true,
@@ -609,16 +527,6 @@
               ")"
             ],
             "formatString": "0.00"
-          },
-          {
-            "name": "Current Grade Level",
-            "dataType": "string",
-            "sourceColumn": "Current Grade Level"
-          },
-          {
-            "name": "Current School ID",
-            "dataType": "string",
-            "sourceColumn": "Current School ID"
           }
         ],
         "partitions": [
@@ -1730,6 +1638,11 @@
             "name": "SectionKey",
             "dataType": "string",
             "sourceColumn": "SectionKey"
+          },
+          {
+            "name": "StudentSectionKey",
+            "dataType": "string",
+            "sourceColumn": "StudentSectionKey"
           }
         ],
         "partitions": [
@@ -1758,7 +1671,8 @@
                 "Subject,",
                 "Term,",
                 "UniqueSectionCode",
-                ",GradingPeriodKey",
+                ",GradingPeriodKey,",
+                "StudentSectionKey",
                 "",
                 "FROM [bi].[amt.Grade]"
               ],
@@ -1787,7 +1701,8 @@
                   "Subject,",
                   "Term,",
                   "UniqueSectionCode",
-                  ",GradingPeriodKey",
+                  ",GradingPeriodKey,",
+                  "StudentSectionKey",
                   "",
                   "FROM [bi].[amt.Grade]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
                 ]
@@ -1818,7 +1733,8 @@
               "Subject,",
               "Term,",
               "UniqueSectionCode",
-              ",GradingPeriodKey",
+              ",GradingPeriodKey,",
+              "StudentSectionKey",
               "",
               "FROM [bi].[amt.Grade]"
             ]
@@ -1853,7 +1769,8 @@
               "Subject,",
               "Term,",
               "UniqueSectionCode",
-              ",GradingPeriodKey",
+              ",GradingPeriodKey,",
+              "StudentSectionKey",
               "",
               "FROM [bi].[amt.Grade]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
@@ -1872,9 +1789,10 @@
               "LOOKUPVALUE(Grade[Subject],",
               "            Grade[StudentUSI],StudentCourseCurrent[StudentUSI],",
               "            Grade[SchoolYear],StudentCourseCurrent[SchoolYear],",
-              "Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
-              "Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
-              "Grade[LocalEducationAgencyId],StudentCourseCurrent[LocalEducationAgencyId])",
+              "            Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
+              "            Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
+              "            Grade[LocalEducationAgencyId],StudentCourseCurrent[LocalEducationAgencyId]",
+              "           )",
               "",
               "/*",
               "IF(MID([LocalCourseCode],11,4) IN {\"5010\"}, \"English Language Arts\",",
@@ -2309,20 +2227,6 @@
             ]
           },
           {
-            "type": "calculated",
-            "name": "StudentSectionKey",
-            "dataType": "string",
-            "isDataTypeInferred": true,
-            "expression": [
-              "LOOKUPVALUE(StudentSectionAssociation[StudentSectionKey],",
-              "              StudentSectionAssociation[StudentUSI], StudentCourseCurrent[StudentUSI],              ",
-              "\t\t\t  StudentSectionAssociation[BeginDate], StudentCourseCurrent[SectionBeginDate],",
-              "StudentSectionAssociation[LocalCourseCode], StudentCourseCurrent[LocalCourseCode] ,\t\t\t  ",
-              "StudentSectionAssociation[LocalEducationAgencyId], StudentCourseCurrent[LocalEducationAgencyId]",
-              ")"
-            ]
-          },
-          {
             "type": "calculatedTableColumn",
             "name": "SectionBeginDate",
             "dataType": "dateTime",
@@ -2344,6 +2248,14 @@
             "isNameInferred": true,
             "isDataTypeInferred": true,
             "sourceColumn": "Grade[GradingPeriodKey]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "StudentSectionKey",
+            "dataType": "string",
+            "isNameInferred": false,
+            "isDataTypeInferred": true,
+            "sourceColumn": "Grade[StudentSectionKey]"
           }
         ],
         "partitions": [
@@ -2357,6 +2269,7 @@
                 ",Grade[SchoolYear]",
                 ",Grade[LocalCourseCode]",
                 ",Grade[LocalEducationAgencyId]",
+                ",Grade[StudentSectionKey]",
                 ",Grade[GradingPeriodKey],\"SectionBeginDate\", MAXX(CURRENTGROUP(),Grade[SectionBeginDate])",
                 ")",
                 ""
@@ -6002,6 +5915,98 @@
             ]
           }
         ]
+      },
+      {
+        "name": "EducationOrganization",
+        "isHidden": true,
+        "columns": [
+          {
+            "name": "EducationOrganizationId",
+            "dataType": "int64",
+            "sourceColumn": "EducationOrganizationId",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "StateOrganizationId",
+            "dataType": "string",
+            "sourceColumn": "StateOrganizationId",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "NameOfInstitution",
+            "dataType": "string",
+            "sourceColumn": "NameOfInstitution",
+            "sourceProviderType": "WChar"
+          },
+          {
+            "name": "LocalEducationAgencyId",
+            "dataType": "int64",
+            "sourceColumn": "LocalEducationAgencyId"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "EducationOrganization",
+            "dataView": "full",
+            "source": {
+              "type": "query",
+              "query": [
+                "SELECT [EducationOrganizationId]",
+                "      ,[StateOrganizationId]",
+                "      ,[NameOfInstitution]",
+                "      ,[LocalEducationAgencyId]",
+                "",
+                "FROM [bi].[amt.EducationOrganization]"
+              ],
+              "dataSource": "EdFi ODS"
+            },
+            "annotations": [
+              {
+                "name": "QueryEditorSerialization",
+                "value": [
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [EducationOrganizationId]",
+                  "      ,[StateOrganizationId]",
+                  "      ,[NameOfInstitution]",
+                  "      ,[LocalEducationAgencyId]",
+                  "",
+                  "FROM [bi].[amt.EducationOrganization]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                ]
+              }
+            ]
+          }
+        ],
+        "annotations": [
+          {
+            "name": "_TM_ExtProp_QueryDefinition",
+            "value": [
+              "SELECT [EducationOrganizationId]",
+              "      ,[StateOrganizationId]",
+              "      ,[NameOfInstitution]",
+              "      ,[LocalEducationAgencyId]",
+              "",
+              "FROM [bi].[amt.EducationOrganization]"
+            ]
+          },
+          {
+            "name": "_TM_ExtProp_DbTableName",
+            "value": "EWS.EducationOrganization"
+          },
+          {
+            "name": "_TM_ExtProp_DbSchemaName",
+            "value": "bi"
+          },
+          {
+            "name": "QueryEditorSerialization",
+            "value": [
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [EducationOrganizationId]",
+              "      ,[StateOrganizationId]",
+              "      ,[NameOfInstitution]",
+              "      ,[LocalEducationAgencyId]",
+              "",
+              "FROM [bi].[amt.EducationOrganization]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+            ]
+          }
+        ]
       }
     ],
     "relationships": [
@@ -6103,6 +6108,29 @@
         "fromColumn": "ObjectiveAssessmentKey",
         "toTable": "StudentAssessmentScoreResult",
         "toColumn": "ObjectiveAssessmentKey"
+      },
+      {
+        "name": "b6eca066-0e18-4040-a025-2db022c745d2",
+        "fromTable": "StaffSectionAssociation",
+        "fromColumn": "SectionKey",
+        "toTable": "Section",
+        "toColumn": "SectionKey",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "7c344d80-d9de-463f-82dc-a0d42a945817",
+        "fromTable": "StudentSectionAssociation",
+        "fromColumn": "SectionKey",
+        "toTable": "Section",
+        "toColumn": "SectionKey"
+      },
+      {
+        "name": "e562f717-a26c-4b45-a735-f107c054df41",
+        "fromTable": "StudentCourseCurrent",
+        "fromColumn": "StudentSectionKey",
+        "toTable": "StudentSectionAssociation",
+        "toColumn": "StudentSectionKey",
+        "crossFilteringBehavior": "bothDirections"
       }
     ],
     "roles": [
