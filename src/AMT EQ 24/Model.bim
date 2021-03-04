@@ -132,7 +132,7 @@
               "The COUNTROWS DAX function returns a blank instead of 0, which renders as \"(BLANK)\" in Power BI. */",
               "",
               "var FailFilter  = FILTER(StudentCourseCurrent, ([Subject] = ELA || [Subject] = Math) ",
-              "                                               && 'Student'[StudentSchoolKey] = StudentCourseCurrent[StudentUSI]",
+              "                                               && 'Student'[StudentSchoolKey] = 'StudentCourseCurrent'[StudentSchoolKey]",
               "                                               && StudentCourseCurrent[Flag Fail ELA/Math] = \"yes\"",
               "                       )",
               "var FailCount = COUNTROWS(FailFilter)",
@@ -308,7 +308,7 @@
           {
             "type": "calculated",
             "name": "Math Trend Direction Last Two Years",
-            "dataType": "string",
+            "dataType": "unknown",
             "isDataTypeInferred": true,
             "expression": [
               " ",
@@ -316,7 +316,7 @@
               "VAR StateAssessmentTitle= \"State Assessment Math\"",
               "",
               "var CurrentGradeTable = SUMMARIZE(FILTER(StudentSchoolAssociation,StudentSchoolAssociation[ExitWithdrawDate] = BLANK()",
-              "                                                                   &&  StudentSchoolAssociation[SchoolId] <> 383518",
+              "                                                                   &&  'StudentSchoolAssociation'[SchoolKey] <> 383518",
               "                                                                   && 'StudentSchoolAssociation'[StudentSchoolKey] = 'Student'[StudentSchoolKey]),                                       ",
               "                                            \"CurrentGrade\", MIN('StudentSchoolAssociation'[GradeLevel*]))",
               "",
@@ -587,8 +587,8 @@
               "",
               "",
               "var CurrentGradeTable = SUMMARIZE(FILTER(StudentSchoolAssociation,StudentSchoolAssociation[ExitWithdrawDate] = BLANK()",
-              "                                                                   &&  StudentSchoolAssociation[SchoolId] <> 383518",
-              "                                                                   &&  StudentSchoolAssociation[SchoolId] <> 150022),",
+              "                                                                   &&  'StudentSchoolAssociation'[SchoolKey] <> 383518",
+              "                                                                   &&  'StudentSchoolAssociation'[SchoolKey] <> 150022),",
               "                                       [StudentSchoolKey],",
               "                                      \"CurrentGrade\", MIN('StudentSchoolAssociation'[GradeLevel*])",
               "                                       )",
@@ -606,7 +606,7 @@
               "var CurrentSchoolTable = SUMMARIZE(FILTER(StudentSchoolAssociation,StudentSchoolAssociation[ExitWithdrawDate] = BLANK()",
               "                                                                   ),",
               "                                       [StudentSchoolKey],",
-              "                                      \"SchoolId\", MIN('StudentSchoolAssociation'[SchoolId])",
+              "                                      \"SchoolId\", MIN('StudentSchoolAssociation'[SchoolKey])",
               "                                       )",
               "",
               "return",
@@ -734,12 +734,6 @@
         "name": "StudentSchoolAssociation",
         "isHidden": true,
         "columns": [
-          {
-            "name": "SchoolId",
-            "dataType": "int64",
-            "sourceColumn": "SchoolId",
-            "sourceProviderType": "Integer"
-          },
           {
             "name": "SchoolYear",
             "dataType": "string",
@@ -875,6 +869,11 @@
             "name": "StudentSchoolKey",
             "dataType": "string",
             "sourceColumn": "StudentSchoolKey"
+          },
+          {
+            "name": "SchoolKey",
+            "dataType": "string",
+            "sourceColumn": "SchoolKey"
           }
         ],
         "partitions": [
@@ -885,7 +884,7 @@
               "type": "query",
               "query": [
                 "SELECT StudentSchoolKey,",
-                "SchoolId,",
+                "SchoolKey,",
                 "NameOfInstitution,",
                 "SchoolYear,",
                 "EntryDate,",
@@ -908,7 +907,7 @@
                 "name": "QueryEditorSerialization",
                 "value": [
                   "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT StudentSchoolKey,",
-                  "SchoolId,",
+                  "SchoolKey,",
                   "NameOfInstitution,",
                   "SchoolYear,",
                   "EntryDate,",
@@ -933,7 +932,7 @@
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
               "SELECT StudentSchoolKey,",
-              "SchoolId,",
+              "SchoolKey,",
               "NameOfInstitution,",
               "SchoolYear,",
               "EntryDate,",
@@ -962,7 +961,7 @@
             "name": "QueryEditorSerialization",
             "value": [
               "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT StudentSchoolKey,",
-              "SchoolId,",
+              "SchoolKey,",
               "NameOfInstitution,",
               "SchoolYear,",
               "EntryDate,",
@@ -984,12 +983,6 @@
       {
         "name": "StudentSectionAssociation",
         "columns": [
-          {
-            "name": "SchoolId",
-            "dataType": "int64",
-            "sourceColumn": "SchoolId",
-            "sourceProviderType": "Integer"
-          },
           {
             "name": "ClassPeriodName",
             "dataType": "string",
@@ -1079,7 +1072,7 @@
               "",
               "var FirstStaffUSI = CALCULATE(",
               "\t\t\tFIRSTNONBLANK(StaffSectionAssociation[StaffUSI], TRUE()),",
-              "\t\t\tFILTER(StaffSectionAssociation, StaffSectionAssociation[SchoolId] = StudentSectionAssociation[SchoolId] &&",
+              "\t\t\tFILTER(StaffSectionAssociation, 'StaffSectionAssociation'[SchoolKey] = 'StudentSectionAssociation'[SchoolKey] &&",
               "\t\t\t\t\t\t\tStaffSectionAssociation[SchoolYear] = StudentSectionAssociation[SchoolYear] &&",
               "\t\t\t\t\t\t\tStaffSectionAssociation[SectionKey] = StudentSectionAssociation[SectionKey])",
               "\t\t)",
@@ -1099,7 +1092,7 @@
               "",
               "var FirstStaffUSI = CALCULATE(",
               "\t\t\tLASTNONBLANK(StaffSectionAssociation[StaffUSI], TRUE()),",
-              "\t\t\tFILTER(StaffSectionAssociation, StaffSectionAssociation[SchoolId] = StudentSectionAssociation[SchoolId] &&",
+              "\t\t\tFILTER(StaffSectionAssociation, 'StaffSectionAssociation'[SchoolKey] = 'StudentSectionAssociation'[SchoolKey] &&",
               "\t\t\t\t\t\t\tStaffSectionAssociation[SchoolYear] = StudentSectionAssociation[SchoolYear] &&",
               "\t\t\t\t\t\t\tStaffSectionAssociation[SectionKey] = StudentSectionAssociation[SectionKey])",
               "\t\t)",
@@ -1131,7 +1124,7 @@
             "name": "SchoolName",
             "dataType": "string",
             "isDataTypeInferred": true,
-            "expression": "LOOKUPVALUE(School[School Name],School[SchoolId],StudentSectionAssociation[SchoolId])"
+            "expression": "LOOKUPVALUE(School[School Name],'School'[SchoolKey],'StudentSectionAssociation'[SchoolKey])"
           },
           {
             "type": "calculated",
@@ -1165,6 +1158,11 @@
             "name": "StudentSchoolKey",
             "dataType": "string",
             "sourceColumn": "StudentSchoolKey"
+          },
+          {
+            "name": "SchoolKey",
+            "dataType": "string",
+            "sourceColumn": "SchoolKey"
           }
         ],
         "partitions": [
@@ -1175,7 +1173,7 @@
               "type": "query",
               "query": [
                 "SELECT StudentSchoolKey,",
-                "SchoolId,",
+                "SchoolKey,",
                 "SectionKey,",
                 "ClassPeriodName,",
                 "ClassroomIdentificationCode,",
@@ -1198,7 +1196,7 @@
                 "name": "QueryEditorSerialization",
                 "value": [
                   "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT StudentSchoolKey,",
-                  "SchoolId,",
+                  "SchoolKey,",
                   "SectionKey,",
                   "ClassPeriodName,",
                   "ClassroomIdentificationCode,",
@@ -1223,7 +1221,7 @@
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
               "SELECT StudentSchoolKey,",
-              "SchoolId,",
+              "SchoolKey,",
               "SectionKey,",
               "ClassPeriodName,",
               "ClassroomIdentificationCode,",
@@ -1252,7 +1250,7 @@
             "name": "QueryEditorSerialization",
             "value": [
               "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT StudentSchoolKey,",
-              "SchoolId,",
+              "SchoolKey,",
               "SectionKey,",
               "ClassPeriodName,",
               "ClassroomIdentificationCode,",
@@ -1275,12 +1273,6 @@
         "name": "School",
         "columns": [
           {
-            "name": "SchoolId",
-            "dataType": "int64",
-            "sourceColumn": "SchoolId",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "SchoolType",
             "dataType": "string",
             "sourceColumn": "SchoolType",
@@ -1296,6 +1288,11 @@
             "name": "School Name",
             "dataType": "string",
             "sourceColumn": "SchoolName"
+          },
+          {
+            "name": "SchoolKey",
+            "dataType": "string",
+            "sourceColumn": "SchoolKey"
           }
         ],
         "partitions": [
@@ -1305,7 +1302,7 @@
             "source": {
               "type": "query",
               "query": [
-                "SELECT [SchoolId]",
+                "SELECT [SchoolKey]",
                 "      ,[LocalEducationAgencyId]",
                 "      --,[SchoolTypeId]",
                 "      ,SchoolName",
@@ -1318,7 +1315,7 @@
               {
                 "name": "QueryEditorSerialization",
                 "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [SchoolId]",
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [SchoolKey]",
                   "      ,[LocalEducationAgencyId]",
                   "      --,[SchoolTypeId]",
                   "      ,SchoolName",
@@ -1333,7 +1330,7 @@
           {
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
-              "SELECT [SchoolId]",
+              "SELECT [SchoolKey]",
               "      ,[LocalEducationAgencyId]",
               "      --,[SchoolTypeId]",
               "      ,SchoolName",
@@ -1352,7 +1349,7 @@
           {
             "name": "QueryEditorSerialization",
             "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [SchoolId]",
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [SchoolKey]",
               "      ,[LocalEducationAgencyId]",
               "      --,[SchoolTypeId]",
               "      ,SchoolName",
@@ -1457,12 +1454,6 @@
         "isHidden": true,
         "columns": [
           {
-            "name": "StudentUSI",
-            "dataType": "string",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "GradingPeriodBeginDate",
             "dataType": "dateTime",
             "sourceColumn": "GradingPeriodBeginDate",
@@ -1480,12 +1471,6 @@
             "dataType": "string",
             "sourceColumn": "GradingPeriod",
             "sourceProviderType": "WChar"
-          },
-          {
-            "name": "SchoolId",
-            "dataType": "int64",
-            "sourceColumn": "SchoolId",
-            "sourceProviderType": "Integer"
           },
           {
             "name": "SchoolYear",
@@ -1633,6 +1618,17 @@
             "name": "StudentSectionKey",
             "dataType": "string",
             "sourceColumn": "StudentSectionKey"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "string",
+            "sourceColumn": "StudentUSI",
+            "sourceProviderType": "Integer"
+          },
+          {
+            "name": "SchoolKey",
+            "dataType": "string",
+            "sourceColumn": "SchoolKey"
           }
         ],
         "partitions": [
@@ -1651,7 +1647,7 @@
                 "GradingPeriodBeginDate,",
                 "LocalCourseCode,",
                 "LocalEducationAgencyId,",
-                "SchoolId,",
+                "SchoolKey,",
                 "SchoolYear,",
                 "SectionKey,",
                 "SectionBeginDate,",
@@ -1681,7 +1677,7 @@
                   "GradingPeriodBeginDate,",
                   "LocalCourseCode,",
                   "LocalEducationAgencyId,",
-                  "SchoolId,",
+                  "SchoolKey,",
                   "SchoolYear,",
                   "SectionKey,",
                   "SectionBeginDate,",
@@ -1713,7 +1709,7 @@
               "GradingPeriodBeginDate,",
               "LocalCourseCode,",
               "LocalEducationAgencyId,",
-              "SchoolId,",
+              "SchoolKey,",
               "SchoolYear,",
               "SectionKey,",
               "SectionBeginDate,",
@@ -1749,7 +1745,7 @@
               "GradingPeriodBeginDate,",
               "LocalCourseCode,",
               "LocalEducationAgencyId,",
-              "SchoolId,",
+              "SchoolKey,",
               "SchoolYear,",
               "SectionKey,",
               "SectionBeginDate,",
@@ -1777,7 +1773,7 @@
             "isDataTypeInferred": true,
             "expression": [
               "LOOKUPVALUE(Grade[Subject],",
-              "            Grade[StudentUSI],StudentCourseCurrent[StudentUSI],",
+              "            'Grade'[StudentSchoolKey],'StudentCourseCurrent'[StudentSchoolKey],",
               "            Grade[SchoolYear],StudentCourseCurrent[SchoolYear],",
               "            Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "            Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
@@ -1802,7 +1798,7 @@
             "expression": [
               "LOOKUPVALUE(Grade[Grade *], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradeType],\"Grading Period\",",
               "                            Grade[GradingPeriod], \"First Nine Weeks\",",
               "                            Grade[Subject],StudentCourseCurrent[Subject]",
@@ -1827,7 +1823,7 @@
               "",
               "LOOKUPVALUE(Grade[Grade *], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradeType],\"Grading Period\",",
               "                            Grade[GradingPeriod], \"Second Nine Weeks\"",
               "           )"
@@ -1842,7 +1838,7 @@
               "",
               "LOOKUPVALUE(Grade[Grade *], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradeType],\"Semester\",",
               "                            Grade[GradingPeriod], \"First Semester\"",
               "           )"
@@ -1857,7 +1853,7 @@
               "",
               "LOOKUPVALUE(Grade[Grade *], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradeType],\"Grading Period\",",
               "                            Grade[GradingPeriod], \"Third Nine Weeks\"",
               "           )"
@@ -1872,7 +1868,7 @@
               "",
               "LOOKUPVALUE(Grade[Grade *], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradeType],\"Grading Period\",",
               "                            Grade[GradingPeriod], \"Fourth Nine Weeks\"",
               "           )"
@@ -1887,7 +1883,7 @@
               "",
               "LOOKUPVALUE(Grade[Grade *], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradeType],\"Semester\",",
               "                            Grade[GradingPeriod], \"Second Semester\"",
               "           )"
@@ -1909,7 +1905,7 @@
               "return",
               "IF(LOOKUPVALUE(Grade[Grade *], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradingPeriod], \"End of Year\"",
               "              ) = BLANK(),",
               "",
@@ -1933,7 +1929,7 @@
               "            ))))",
               ",LOOKUPVALUE(Grade[Grade *], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradingPeriod], \"End of Year\"",
               "           )",
               "  )"
@@ -1980,7 +1976,7 @@
             "isHidden": true,
             "expression": [
               "LOOKUPVALUE(Grade[SectionEndDate],",
-              "            Grade[StudentUSI],StudentCourseCurrent[StudentUSI],",
+              "            'Grade'[StudentSchoolKey],'StudentCourseCurrent'[StudentSchoolKey],",
               "            Grade[SchoolYear],StudentCourseCurrent[SchoolYear],",
               "Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
@@ -1995,14 +1991,6 @@
                 "value": "<Format Format=\"DateTimeShortDatePattern\" />"
               }
             ]
-          },
-          {
-            "type": "calculatedTableColumn",
-            "name": "StudentUSI",
-            "dataType": "string",
-            "isNameInferred": false,
-            "isDataTypeInferred": true,
-            "sourceColumn": "Grade[StudentUSI]"
           },
           {
             "type": "calculatedTableColumn",
@@ -2036,7 +2024,7 @@
             "expression": [
               "LOOKUPVALUE(Grade[GradeEarned], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradeType],\"Grading Period\",",
               "                            Grade[GradingPeriod], \"First Nine Weeks\",",
               "                            Grade[Subject],StudentCourseCurrent[Subject]",
@@ -2061,7 +2049,7 @@
               "",
               "LOOKUPVALUE(Grade[GradeEarned], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradeType],\"Grading Period\",",
               "                            Grade[GradingPeriod], \"Second Nine Weeks\"",
               "           )"
@@ -2076,7 +2064,7 @@
               "",
               "LOOKUPVALUE(Grade[GradeEarned], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradeType],\"Semester\",",
               "                            Grade[GradingPeriod], \"First Semester\"",
               "           )"
@@ -2091,7 +2079,7 @@
               "",
               "LOOKUPVALUE(Grade[GradeEarned], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradeType],\"Grading Period\",",
               "                            Grade[GradingPeriod], \"Third Nine Weeks\"",
               "           )"
@@ -2106,7 +2094,7 @@
               "",
               "LOOKUPVALUE(Grade[GradeEarned], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradeType],\"Grading Period\",",
               "                            Grade[GradingPeriod], \"Fourth Nine Weeks\"",
               "           )"
@@ -2121,7 +2109,7 @@
               "",
               "LOOKUPVALUE(Grade[GradeEarned], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradeType],\"Semester\",",
               "                            Grade[GradingPeriod], \"Second Semester\"",
               "           )"
@@ -2136,7 +2124,7 @@
               "",
               "LOOKUPVALUE(Grade[GradeEarned], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradeType],\"Final\",",
               "                            Grade[GradingPeriod], \"End of Year\"",
               "           )"
@@ -2157,7 +2145,7 @@
               "return",
               "IF(LOOKUPVALUE(Grade[Grade *], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradingPeriod], \"End of Year\"",
               "              ) = BLANK(),",
               "",
@@ -2175,7 +2163,7 @@
               "            ))))",
               ",LOOKUPVALUE(Grade[Grade *], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
-              "                            Grade[StudentUSI], StudentCourseCurrent[StudentUSI],",
+              "                            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
               "                            Grade[GradingPeriod], \"End of Year\"",
               "           )",
               "  )"
@@ -2246,6 +2234,14 @@
             "isNameInferred": false,
             "isDataTypeInferred": true,
             "sourceColumn": "Grade[StudentSectionKey]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "StudentSchoolKey",
+            "dataType": "string",
+            "isNameInferred": false,
+            "isDataTypeInferred": true,
+            "sourceColumn": "Grade[StudentSchoolKey]"
           }
         ],
         "partitions": [
@@ -2255,7 +2251,7 @@
               "type": "calculated",
               "expression": [
                 "GROUPBY(Grade",
-                ",Grade[StudentUSI]",
+                ",'Grade'[StudentSchoolKey]",
                 ",Grade[SchoolYear]",
                 ",Grade[LocalCourseCode]",
                 ",Grade[LocalEducationAgencyId]",
@@ -2904,12 +2900,6 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "SchoolId",
-            "dataType": "int64",
-            "sourceColumn": "SchoolId",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "ClassPeriodName",
             "dataType": "string",
             "sourceColumn": "ClassPeriodName",
@@ -2975,6 +2965,11 @@
             "name": "SectionKey",
             "dataType": "string",
             "sourceColumn": "SectionKey"
+          },
+          {
+            "name": "SchoolKey",
+            "dataType": "string",
+            "sourceColumn": "SchoolKey"
           }
         ],
         "partitions": [
@@ -2986,7 +2981,7 @@
               "query": [
                 "SELECT [StaffUSI]",
                 "      ,[ClassroomIdentificationCode]",
-                "      ,[SchoolId]",
+                "      ,[SchoolKey]",
                 "      ,SectionKey",
                 "      ,[ClassPeriodName]",
                 "      ,[LocalCourseCode]",
@@ -3008,7 +3003,7 @@
                 "value": [
                   "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [StaffUSI]",
                   "      ,[ClassroomIdentificationCode]",
-                  "      ,[SchoolId]",
+                  "      ,[SchoolKey]",
                   "      ,SectionKey",
                   "      ,[ClassPeriodName]",
                   "      ,[LocalCourseCode]",
@@ -3032,7 +3027,7 @@
             "value": [
               "SELECT [StaffUSI]",
               "      ,[ClassroomIdentificationCode]",
-              "      ,[SchoolId]",
+              "      ,[SchoolKey]",
               "      ,SectionKey",
               "      ,[ClassPeriodName]",
               "      ,[LocalCourseCode]",
@@ -3060,7 +3055,7 @@
             "value": [
               "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [StaffUSI]",
               "      ,[ClassroomIdentificationCode]",
-              "      ,[SchoolId]",
+              "      ,[SchoolKey]",
               "      ,SectionKey",
               "      ,[ClassPeriodName]",
               "      ,[LocalCourseCode]",
@@ -3294,12 +3289,6 @@
             "sourceProviderType": "Integer"
           },
           {
-            "name": "SchoolID",
-            "dataType": "int64",
-            "sourceColumn": "SchoolID",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "School",
             "dataType": "string",
             "sourceColumn": "School",
@@ -3367,6 +3356,11 @@
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": " LOOKUPVALUE(Staff[LoginId],Staff[StaffUSI],StaffEducationOrganizationAssignmentAssociation[StaffUSI])"
+          },
+          {
+            "name": "SchoolKey",
+            "dataType": "string",
+            "sourceColumn": "SchoolKey"
           }
         ],
         "partitions": [
@@ -3421,12 +3415,6 @@
         "name": "Section",
         "columns": [
           {
-            "name": "SchoolId",
-            "dataType": "int64",
-            "sourceColumn": "SchoolId",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "ClassPeriodName",
             "dataType": "string",
             "sourceColumn": "ClassPeriodName",
@@ -3471,6 +3459,11 @@
             "name": "SectionKey",
             "dataType": "string",
             "sourceColumn": "SectionKey"
+          },
+          {
+            "name": "SchoolKey",
+            "dataType": "string",
+            "sourceColumn": "SchoolKey"
           }
         ],
         "partitions": [
@@ -3480,7 +3473,7 @@
             "source": {
               "type": "query",
               "query": [
-                "SELECT distinct [SchoolId]",
+                "SELECT distinct [SchoolKey]",
                 "      ,SectionKey",
                 "      ,[ClassPeriodName]",
                 "      ,[ClassroomIdentificationCode]",
@@ -3497,7 +3490,7 @@
               {
                 "name": "QueryEditorSerialization",
                 "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT distinct [SchoolId]",
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT distinct [SchoolKey]",
                   "      ,SectionKey",
                   "      ,[ClassPeriodName]",
                   "      ,[ClassroomIdentificationCode]",
@@ -3516,7 +3509,7 @@
           {
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
-              "SELECT distinct [SchoolId]",
+              "SELECT distinct [SchoolKey]",
               "      ,SectionKey",
               "      ,[ClassPeriodName]",
               "      ,[ClassroomIdentificationCode]",
@@ -3539,7 +3532,7 @@
           {
             "name": "QueryEditorSerialization",
             "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT distinct [SchoolId]",
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT distinct [SchoolKey]",
               "      ,SectionKey",
               "      ,[ClassPeriodName]",
               "      ,[ClassroomIdentificationCode]",
@@ -4255,17 +4248,17 @@
             ]
           },
           {
-            "type": "calculated",
-            "name": "Current School ID",
-            "dataType": "string",
-            "isDataTypeInferred": true,
-            "expression": "RELATED(Student[Current School ID])"
-          },
-          {
             "name": "StudentSchoolKey",
             "dataType": "int64",
             "sourceColumn": "StudentUSI",
             "sourceProviderType": "Integer"
+          },
+          {
+            "type": "calculated",
+            "name": "Current School Key",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": "RELATED(Student[Current School ID])"
           }
         ],
         "partitions": [
@@ -4836,13 +4829,6 @@
           },
           {
             "type": "calculated",
-            "name": "Current School ID",
-            "dataType": "string",
-            "isDataTypeInferred": true,
-            "expression": "RELATED(Student[Current School ID])"
-          },
-          {
-            "type": "calculated",
             "name": "SchoolYear",
             "dataType": "int64",
             "isDataTypeInferred": true,
@@ -4862,6 +4848,13 @@
             "dataType": "int64",
             "sourceColumn": "StudentUSI",
             "sourceProviderType": "Integer"
+          },
+          {
+            "type": "calculated",
+            "name": "Current School Key",
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "expression": "RELATED(Student[Current School ID])"
           }
         ],
         "partitions": [
@@ -5905,13 +5898,6 @@
     ],
     "relationships": [
       {
-        "name": "3d542fa5-15a1-4a6d-b574-e10c0bd191f4",
-        "fromTable": "StaffEducationOrganizationAssignmentAssociation",
-        "fromColumn": "SchoolID",
-        "toTable": "School",
-        "toColumn": "SchoolId"
-      },
-      {
         "name": "93f00328-47b4-45c9-97cd-f245353e20b9",
         "fromTable": "StaffEducationOrganizationAssignmentAssociation",
         "fromColumn": "StaffUSI",
@@ -6066,7 +6052,7 @@
           },
           {
             "name": "StudentSectionAssociation",
-            "filterExpression": "StudentSectionAssociation[SchoolId] = [RLS_SchoolId]"
+            "filterExpression": "'StudentSectionAssociation'[SchoolKey] = [RLS_SchoolId]"
           },
           {
             "name": "Student",
@@ -6074,7 +6060,7 @@
           },
           {
             "name": "iReady_StudentAssessmentScoreResult",
-            "filterExpression": "iReady_StudentAssessmentScoreResult[Current School ID] = [RLS_SchoolId]"
+            "filterExpression": "'iReady_StudentAssessmentScoreResult'[Current School Key] = [RLS_SchoolId]"
           },
           {
             "name": "StudentAssessmentScoreResult",
@@ -6082,7 +6068,7 @@
           },
           {
             "name": "MC_StudentAssessmentScoreResult",
-            "filterExpression": "MC_StudentAssessmentScoreResult[Current School ID] = [RLS_SchoolId]"
+            "filterExpression": "'MC_StudentAssessmentScoreResult'[Current School Key] = [RLS_SchoolId]"
           }
         ]
       },
@@ -6092,15 +6078,15 @@
         "tablePermissions": [
           {
             "name": "StudentSectionAssociation",
-            "filterExpression": "StudentSectionAssociation[SchoolId] = [RLS_SchoolId]"
+            "filterExpression": "'StudentSectionAssociation'[SchoolKey] = [RLS_SchoolId]"
           },
           {
             "name": "StaffSectionAssociation",
-            "filterExpression": "StaffSectionAssociation[SchoolId] = [RLS_SchoolId]"
+            "filterExpression": "'StaffSectionAssociation'[SchoolKey] = [RLS_SchoolId]"
           },
           {
             "name": "Section",
-            "filterExpression": "Section[SchoolId] = [RLS_SchoolId]"
+            "filterExpression": "'Section'[SchoolKey] = [RLS_SchoolId]"
           },
           {
             "name": "Student",
@@ -6108,7 +6094,7 @@
           },
           {
             "name": "School",
-            "filterExpression": "School[SchoolId] = [RLS_SchoolId]"
+            "filterExpression": "'School'[SchoolKey] = [RLS_SchoolId]"
           },
           {
             "name": "StudentAssessmentScoreResult",
@@ -6116,11 +6102,11 @@
           },
           {
             "name": "MC_StudentAssessmentScoreResult",
-            "filterExpression": "MC_StudentAssessmentScoreResult[Current School ID] = [RLS_SchoolId]"
+            "filterExpression": "'MC_StudentAssessmentScoreResult'[Current School Key] = [RLS_SchoolId]"
           },
           {
             "name": "iReady_StudentAssessmentScoreResult",
-            "filterExpression": "iReady_StudentAssessmentScoreResult[Current School ID] = [RLS_SchoolId]"
+            "filterExpression": "'iReady_StudentAssessmentScoreResult'[Current School Key] = [RLS_SchoolId]"
           }
         ]
       }
