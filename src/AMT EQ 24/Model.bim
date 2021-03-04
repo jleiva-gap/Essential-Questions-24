@@ -32,12 +32,6 @@
         "name": "Student",
         "columns": [
           {
-            "name": "StudentUSI",
-            "dataType": "string",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "FirstName",
             "dataType": "string",
             "isHidden": true,
@@ -112,7 +106,7 @@
               "",
               "IF(",
               "",
-              "     LOOKUPVALUE(StudentProgramAssociation[ProgramName], StudentProgramAssociation[StudentUSI],Student[StudentUSI]",
+              "     LOOKUPVALUE(StudentProgramAssociation[ProgramName], 'StudentProgramAssociation'[StudentSchoolKey],'Student'[StudentSchoolKey]",
               "                                                       ,StudentProgramAssociation[ProgramName],\"Special Education\")  = \"Special Education\",\"Yes\", ",
               "",
               "     \"No\"",
@@ -138,7 +132,7 @@
               "The COUNTROWS DAX function returns a blank instead of 0, which renders as \"(BLANK)\" in Power BI. */",
               "",
               "var FailFilter  = FILTER(StudentCourseCurrent, ([Subject] = ELA || [Subject] = Math) ",
-              "                                               && Student[StudentUSI] = StudentCourseCurrent[StudentUSI]",
+              "                                               && 'Student'[StudentSchoolKey] = StudentCourseCurrent[StudentUSI]",
               "                                               && StudentCourseCurrent[Flag Fail ELA/Math] = \"yes\"",
               "                       )",
               "var FailCount = COUNTROWS(FailFilter)",
@@ -190,7 +184,7 @@
               "",
               "VAR StudentAssessmentScoreResultTable =",
               "GENERATE (",
-              "          SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentUSI] ), \"ID\", [StudentUSI] ),",
+              "          SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentSchoolKey] ), \"ID\", [StudentSchoolKey] ),",
               "          CALCULATETABLE ( TOPN ( 1, 'StudentAssessmentScoreResult', [AdministrationDate], DESC ),",
               "\t                       'StudentAssessmentScoreResult'[StateAssessmentTitle] IN {StateAssessmentTitle},",
               "\t\t\t\t\t\t    Year('StudentAssessmentScoreResult'[AdministrationDate]) = YearAdminDate,",
@@ -216,7 +210,7 @@
               "",
               "VAR StudentAssessmentScoreResultTable =",
               "GENERATE (",
-              "          SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentUSI] ), \"ID\", [StudentUSI] ),",
+              "          SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentSchoolKey] ), \"ID\", [StudentSchoolKey] ),",
               "          CALCULATETABLE ( TOPN ( 1, 'StudentAssessmentScoreResult', [AdministrationDate], DESC ),",
               "\t\t                   'StudentAssessmentScoreResult'[StateAssessmentTitle] IN {StateAssessmentTitle},",
               "\t\t\t\t\t\t    Year('StudentAssessmentScoreResult'[AdministrationDate]) = YearAdminDate,",
@@ -265,7 +259,7 @@
               "",
               "VAR StudentAssessmentScoreResultTable =",
               "GENERATE (",
-              "          SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentUSI] ), \"ID\", [StudentUSI] ),",
+              "          SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentSchoolKey] ), \"ID\", [StudentSchoolKey] ),",
               "          CALCULATETABLE ( TOPN ( 1, 'StudentAssessmentScoreResult', [AdministrationDate], DESC ),",
               "\t\t                   'StudentAssessmentScoreResult'[StateAssessmentTitle] IN {StateAssessmentTitle},",
               "\t\t\t\t\t\t    Year('StudentAssessmentScoreResult'[AdministrationDate]) = YearAdminDate,",
@@ -297,7 +291,7 @@
               "",
               "VAR StudentAssessmentScoreResultTable =",
               "GENERATE (",
-              "          SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentUSI] ), \"ID\", [StudentUSI] ),",
+              "          SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentSchoolKey] ), \"ID\", [StudentSchoolKey] ),",
               "          CALCULATETABLE ( TOPN ( 1, 'StudentAssessmentScoreResult', [AdministrationDate], DESC ),",
               "\t\t                   'StudentAssessmentScoreResult'[StateAssessmentTitle] IN {StateAssessmentTitle},",
               "\t\t\t\t\t\t    Year('StudentAssessmentScoreResult'[AdministrationDate]) = YearAdminDate,",
@@ -323,37 +317,37 @@
               "",
               "var CurrentGradeTable = SUMMARIZE(FILTER(StudentSchoolAssociation,StudentSchoolAssociation[ExitWithdrawDate] = BLANK()",
               "                                                                   &&  StudentSchoolAssociation[SchoolId] <> 383518",
-              "                                                                   && StudentSchoolAssociation[StudentUSI] = Student[StudentUSI]),                                       ",
+              "                                                                   && 'StudentSchoolAssociation'[StudentSchoolKey] = 'Student'[StudentSchoolKey]),                                       ",
               "                                            \"CurrentGrade\", MIN('StudentSchoolAssociation'[GradeLevel*]))",
               "",
               "var CurrentGrLev = CALCULATE(AVERAGEX(CurrentGradeTable, VALUE([CurrentGrade])))",
               "",
-              "VAR ScoreGr3 = GENERATE (SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentUSI] ), \"ID\", [StudentUSI] ),",
+              "VAR ScoreGr3 = GENERATE (SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentSchoolKey] ), \"ID\", [StudentSchoolKey] ),",
               "                         CALCULATETABLE ( TOPN ( 1, 'StudentAssessmentScoreResult', [AdministrationDate], DESC ),",
               "\t\t                           'StudentAssessmentScoreResult'[StateAssessmentTitle] IN {StateAssessmentTitle},",
               "\t\t\t\t\t\t            'StudentAssessmentScoreResult'[GradeLevel] = \"Third Grade\",",
               "\t\t\t\t\t\t           'StudentAssessmentScoreResult'[AssessmentReportingMethodTypeId] = ReportingMethod))",
-              "VAR ScoreGr4 = GENERATE (SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentUSI] ), \"ID\", [StudentUSI] ),",
+              "VAR ScoreGr4 = GENERATE (SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentSchoolKey] ), \"ID\", [StudentSchoolKey] ),",
               "                         CALCULATETABLE ( TOPN ( 1, 'StudentAssessmentScoreResult', [AdministrationDate], DESC ),",
               "\t\t                           'StudentAssessmentScoreResult'[StateAssessmentTitle] IN {StateAssessmentTitle},",
               "\t\t\t\t\t\t            'StudentAssessmentScoreResult'[GradeLevel] = \"Fourth Grade\",",
               "\t\t\t\t\t\t           'StudentAssessmentScoreResult'[AssessmentReportingMethodTypeId] = ReportingMethod))",
-              "VAR ScoreGr5 = GENERATE (SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentUSI] ), \"ID\", [StudentUSI] ),",
+              "VAR ScoreGr5 = GENERATE (SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentSchoolKey] ), \"ID\", [StudentSchoolKey] ),",
               "                         CALCULATETABLE ( TOPN ( 1, 'StudentAssessmentScoreResult', [AdministrationDate], DESC ),",
               "\t\t                           'StudentAssessmentScoreResult'[StateAssessmentTitle] IN {StateAssessmentTitle},",
               "\t\t\t\t\t\t            'StudentAssessmentScoreResult'[GradeLevel] = \"Fifth Grade\",",
               "\t\t\t\t\t\t           'StudentAssessmentScoreResult'[AssessmentReportingMethodTypeId] = ReportingMethod))",
-              "VAR ScoreGr6 = GENERATE (SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentUSI] ), \"ID\", [StudentUSI] ),",
+              "VAR ScoreGr6 = GENERATE (SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentSchoolKey] ), \"ID\", [StudentSchoolKey] ),",
               "                         CALCULATETABLE ( TOPN ( 1, 'StudentAssessmentScoreResult', [AdministrationDate], DESC ),",
               "\t\t                           'StudentAssessmentScoreResult'[StateAssessmentTitle] IN {StateAssessmentTitle},",
               "\t\t\t\t\t\t            'StudentAssessmentScoreResult'[GradeLevel] = \"Sixth Grade\",",
               "\t\t\t\t\t\t           'StudentAssessmentScoreResult'[AssessmentReportingMethodTypeId] = ReportingMethod))",
-              "VAR ScoreGr7 = GENERATE (SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentUSI] ), \"ID\", [StudentUSI] ),",
+              "VAR ScoreGr7 = GENERATE (SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentSchoolKey] ), \"ID\", [StudentSchoolKey] ),",
               "                         CALCULATETABLE ( TOPN ( 1, 'StudentAssessmentScoreResult', [AdministrationDate], DESC ),",
               "\t\t                           'StudentAssessmentScoreResult'[StateAssessmentTitle] IN {StateAssessmentTitle},",
               "\t\t\t\t\t\t            'StudentAssessmentScoreResult'[GradeLevel] = \"Seventh Grade\",",
               "\t\t\t\t\t\t           'StudentAssessmentScoreResult'[AssessmentReportingMethodTypeId] = ReportingMethod))",
-              "VAR ScoreGr8 = GENERATE (SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentUSI] ), \"ID\", [StudentUSI] ),",
+              "VAR ScoreGr8 = GENERATE (SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentSchoolKey] ), \"ID\", [StudentSchoolKey] ),",
               "                         CALCULATETABLE ( TOPN ( 1, 'StudentAssessmentScoreResult', [AdministrationDate], DESC ),",
               "\t\t                           'StudentAssessmentScoreResult'[StateAssessmentTitle] IN {StateAssessmentTitle},",
               "\t\t\t\t\t\t            'StudentAssessmentScoreResult'[GradeLevel] = \"Eighth Grade\",",
@@ -425,7 +419,7 @@
               "",
               "VAR StudentAssessmentScoreResultTable =",
               "GENERATE (",
-              "          SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentUSI] ), \"ID\", [StudentUSI] ),",
+              "          SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentSchoolKey] ), \"ID\", [StudentSchoolKey] ),",
               "          CALCULATETABLE ( TOPN ( 1, 'StudentAssessmentScoreResult', [AdministrationDate], DESC ),",
               "\t\t                   'StudentAssessmentScoreResult'[StateAssessmentTitle] IN {StateAssessmentTitle},",
               "\t\t\t\t\t\t    Year('StudentAssessmentScoreResult'[AdministrationDate]) = YearAdminDate,",
@@ -453,7 +447,7 @@
               "",
               "VAR StudentAssessmentScoreResultTable =",
               "GENERATE (",
-              "          SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentUSI] ), \"ID\", [StudentUSI] ),",
+              "          SELECTCOLUMNS ( VALUES ( 'StudentAssessmentScoreResult'[StudentSchoolKey] ), \"ID\", [StudentSchoolKey] ),",
               "          CALCULATETABLE ( TOPN ( 1, 'StudentAssessmentScoreResult', [AdministrationDate], DESC ),",
               "\t                       'StudentAssessmentScoreResult'[StateAssessmentTitle] IN {StateAssessmentTitle},",
               "\t\t\t\t\t\t    Year('StudentAssessmentScoreResult'[AdministrationDate]) = YearAdminDate,",
@@ -521,6 +515,16 @@
               ")"
             ],
             "formatString": "0.00"
+          },
+          {
+            "name": "OldEthnicityTypeId",
+            "dataType": "string",
+            "sourceColumn": "OldEthnicityTypeId"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "string",
+            "sourceColumn": "StudentSchoolKey"
           }
         ],
         "partitions": [
@@ -544,7 +548,7 @@
                 "       OldEthnicityTypeId, ",
                 "       SexType, ",
                 "       StudentUniqueId, ",
-                "       StudentUSI",
+                "       StudentSchoolKey ",
                 "FROM ",
                 "     [bi].[amt.Student]"
               ],
@@ -568,7 +572,7 @@
                   "       OldEthnicityTypeId, ",
                   "       SexType, ",
                   "       StudentUniqueId, ",
-                  "       StudentUSI",
+                  "       StudentSchoolKey ",
                   "FROM ",
                   "     [bi].[amt.Student]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
                 ]
@@ -585,7 +589,7 @@
               "var CurrentGradeTable = SUMMARIZE(FILTER(StudentSchoolAssociation,StudentSchoolAssociation[ExitWithdrawDate] = BLANK()",
               "                                                                   &&  StudentSchoolAssociation[SchoolId] <> 383518",
               "                                                                   &&  StudentSchoolAssociation[SchoolId] <> 150022),",
-              "                                       [StudentUSI],",
+              "                                       [StudentSchoolKey],",
               "                                      \"CurrentGrade\", MIN('StudentSchoolAssociation'[GradeLevel*])",
               "                                       )",
               "",
@@ -601,7 +605,7 @@
               "",
               "var CurrentSchoolTable = SUMMARIZE(FILTER(StudentSchoolAssociation,StudentSchoolAssociation[ExitWithdrawDate] = BLANK()",
               "                                                                   ),",
-              "                                       [StudentUSI],",
+              "                                       [StudentSchoolKey],",
               "                                      \"SchoolId\", MIN('StudentSchoolAssociation'[SchoolId])",
               "                                       )",
               "",
@@ -689,7 +693,7 @@
               "       OldEthnicityTypeId, ",
               "       SexType, ",
               "       StudentUniqueId, ",
-              "       StudentUSI",
+              "       StudentSchoolKey ",
               "FROM ",
               "     [bi].[amt.Student]"
             ]
@@ -719,7 +723,7 @@
               "       OldEthnicityTypeId, ",
               "       SexType, ",
               "       StudentUniqueId, ",
-              "       StudentUSI",
+              "       StudentSchoolKey ",
               "FROM ",
               "     [bi].[amt.Student]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
@@ -730,12 +734,6 @@
         "name": "StudentSchoolAssociation",
         "isHidden": true,
         "columns": [
-          {
-            "name": "StudentUSI",
-            "dataType": "string",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
           {
             "name": "SchoolId",
             "dataType": "int64",
@@ -872,6 +870,11 @@
             "name": "GradeLevelNum",
             "dataType": "string",
             "sourceColumn": "GradeLevelNum"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "string",
+            "sourceColumn": "StudentSchoolKey"
           }
         ],
         "partitions": [
@@ -881,7 +884,7 @@
             "source": {
               "type": "query",
               "query": [
-                "SELECT StudentUSI,",
+                "SELECT StudentSchoolKey,",
                 "SchoolId,",
                 "NameOfInstitution,",
                 "SchoolYear,",
@@ -904,7 +907,7 @@
               {
                 "name": "QueryEditorSerialization",
                 "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT StudentUSI,",
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT StudentSchoolKey,",
                   "SchoolId,",
                   "NameOfInstitution,",
                   "SchoolYear,",
@@ -929,7 +932,7 @@
           {
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
-              "SELECT StudentUSI,",
+              "SELECT StudentSchoolKey,",
               "SchoolId,",
               "NameOfInstitution,",
               "SchoolYear,",
@@ -958,7 +961,7 @@
           {
             "name": "QueryEditorSerialization",
             "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT StudentUSI,",
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT StudentSchoolKey,",
               "SchoolId,",
               "NameOfInstitution,",
               "SchoolYear,",
@@ -981,12 +984,6 @@
       {
         "name": "StudentSectionAssociation",
         "columns": [
-          {
-            "name": "StudentUSI",
-            "dataType": "string",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
           {
             "name": "SchoolId",
             "dataType": "int64",
@@ -1127,7 +1124,7 @@
             "name": "Student Name",
             "dataType": "string",
             "isDataTypeInferred": true,
-            "expression": " LOOKUPVALUE(Student[Student Name],Student[StudentUSI],StudentSectionAssociation[StudentUSI])"
+            "expression": " LOOKUPVALUE(Student[Student Name],'Student'[StudentSchoolKey],'StudentSectionAssociation'[StudentSchoolKey])"
           },
           {
             "type": "calculated",
@@ -1163,6 +1160,11 @@
             "name": "SectionKey",
             "dataType": "string",
             "sourceColumn": "SectionKey"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "string",
+            "sourceColumn": "StudentSchoolKey"
           }
         ],
         "partitions": [
@@ -1172,7 +1174,7 @@
             "source": {
               "type": "query",
               "query": [
-                "SELECT StudentUSI,",
+                "SELECT StudentSchoolKey,",
                 "SchoolId,",
                 "SectionKey,",
                 "ClassPeriodName,",
@@ -1195,7 +1197,7 @@
               {
                 "name": "QueryEditorSerialization",
                 "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT StudentUSI,",
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT StudentSchoolKey,",
                   "SchoolId,",
                   "SectionKey,",
                   "ClassPeriodName,",
@@ -1220,7 +1222,7 @@
           {
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
-              "SELECT StudentUSI,",
+              "SELECT StudentSchoolKey,",
               "SchoolId,",
               "SectionKey,",
               "ClassPeriodName,",
@@ -1249,7 +1251,7 @@
           {
             "name": "QueryEditorSerialization",
             "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT StudentUSI,",
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT StudentSchoolKey,",
               "SchoolId,",
               "SectionKey,",
               "ClassPeriodName,",
@@ -1365,12 +1367,6 @@
         "isHidden": true,
         "columns": [
           {
-            "name": "StudentUSI",
-            "dataType": "string",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "ProgramName",
             "dataType": "string",
             "sourceColumn": "ProgramName",
@@ -1389,6 +1385,11 @@
             "sourceColumn": "EndDate",
             "formatString": "General Date",
             "sourceProviderType": "DBDate"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "string",
+            "sourceColumn": "StudentSchoolKey"
           }
         ],
         "partitions": [
@@ -1398,7 +1399,7 @@
             "source": {
               "type": "query",
               "query": [
-                "SELECT [StudentUSI]",
+                "SELECT [StudentSchoolKey]",
                 "      ,[ProgramName]",
                 "      ,[BeginDate]",
                 "      ,[EndDate]",
@@ -1410,7 +1411,7 @@
               {
                 "name": "QueryEditorSerialization",
                 "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [StudentUSI]",
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [StudentSchoolKey]",
                   "      ,[ProgramName]",
                   "      ,[BeginDate]",
                   "      ,[EndDate]",
@@ -1424,7 +1425,7 @@
           {
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
-              "SELECT [StudentUSI]",
+              "SELECT [StudentSchoolKey]",
               "      ,[ProgramName]",
               "      ,[BeginDate]",
               "      ,[EndDate]",
@@ -1442,7 +1443,7 @@
           {
             "name": "QueryEditorSerialization",
             "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [StudentUSI]",
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [StudentSchoolKey]",
               "      ,[ProgramName]",
               "      ,[BeginDate]",
               "      ,[EndDate]",
@@ -2284,12 +2285,6 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "StudentUSI",
-            "dataType": "string",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "AdministrationDate",
             "dataType": "dateTime",
             "sourceColumn": "AdministrationDate",
@@ -2348,6 +2343,11 @@
             "name": "StudentAssessmentKey",
             "dataType": "string",
             "sourceColumn": "StudentAssessmentKey"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "string",
+            "sourceColumn": "StudentSchoolKey"
           }
         ],
         "partitions": [
@@ -2361,7 +2361,7 @@
                 "[AssessmentIdentifier]",
                 "      ,[StudentAssessmentIdentifier]",
                 "      ,StudentAssessmentKey",
-                "      ,[StudentUSI]",
+                "      ,[StudentSchoolKey]",
                 "      ,[AdministrationDate]",
                 "      ,[GradeLevel]",
                 "      ,[AcademicSubject]",
@@ -2381,7 +2381,7 @@
                   "[AssessmentIdentifier]",
                   "      ,[StudentAssessmentIdentifier]",
                   "      ,StudentAssessmentKey",
-                  "      ,[StudentUSI]",
+                  "      ,[StudentSchoolKey]",
                   "      ,[AdministrationDate]",
                   "      ,[GradeLevel]",
                   "      ,[AcademicSubject]",
@@ -2403,7 +2403,7 @@
               "[AssessmentIdentifier]",
               "      ,[StudentAssessmentIdentifier]",
               "      ,StudentAssessmentKey",
-              "      ,[StudentUSI]",
+              "      ,[StudentSchoolKey]",
               "      ,[AdministrationDate]",
               "      ,[GradeLevel]",
               "      ,[AcademicSubject]",
@@ -2429,7 +2429,7 @@
               "[AssessmentIdentifier]",
               "      ,[StudentAssessmentIdentifier]",
               "      ,StudentAssessmentKey",
-              "      ,[StudentUSI]",
+              "      ,[StudentSchoolKey]",
               "      ,[AdministrationDate]",
               "      ,[GradeLevel]",
               "      ,[AcademicSubject]",
@@ -2456,12 +2456,6 @@
             "dataType": "string",
             "sourceColumn": "StudentAssessmentIdentifier",
             "sourceProviderType": "WChar"
-          },
-          {
-            "name": "StudentUSI",
-            "dataType": "string",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
           },
           {
             "name": "AdministrationDate",
@@ -2523,7 +2517,7 @@
               "LOOKUPVALUE(StudentAssessmentPerformanceLevel[Result],",
               "StudentAssessmentPerformanceLevel[StudentAssessmentIdentifier],StudentAssessmentScoreResult[StudentAssessmentIdentifier],",
               "StudentAssessmentPerformanceLevel[AcademicSubject],StudentAssessmentScoreResult[AcademicSubject],",
-              "StudentAssessmentPerformanceLevel[StudentUSI],StudentAssessmentScoreResult[StudentUSI]",
+              "'StudentAssessmentPerformanceLevel'[StudentSchoolKey],'StudentAssessmentScoreResult'[StudentSchoolKey]",
               "",
               "           )"
             ]
@@ -2629,7 +2623,7 @@
             "isHidden": true,
             "expression": [
               "[AssessmentIdentifier] ",
-              " & \"^\" & [StudentUSI]"
+              " & \"^\" & [StudentSchoolKey]"
             ]
           },
           {
@@ -2755,7 +2749,7 @@
               "[AcademicSubject] & \"^\" & ",
               "[AssessmentIdentifier] & \"^\" & ",
               "[AssessmentReportingMethodTypeId] & \"^\" & ",
-              "[StudentUSI] & \"^\" & ",
+              "[StudentSchoolKey] & \"^\" & ",
               "[AdministrationDate] & \"^\" & ",
               "[Namespace]"
             ]
@@ -2797,6 +2791,11 @@
             "name": "StudentAssessmentKey",
             "dataType": "string",
             "sourceColumn": "StudentAssessmentKey"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "string",
+            "sourceColumn": "StudentSchoolKey"
           }
         ],
         "partitions": [
@@ -2810,7 +2809,7 @@
                 "[AssessmentIdentifier]",
                 "      ,[StudentAssessmentIdentifier]",
                 "      ,[StudentAssessmentKey]",
-                "      ,[StudentUSI]",
+                "      ,[StudentSchoolKey]",
                 "      ,[AdministrationDate]",
                 "      ,[GradeLevel]",
                 "      ,[AcademicSubject]",
@@ -2831,7 +2830,7 @@
                   "[AssessmentIdentifier]",
                   "      ,[StudentAssessmentIdentifier]",
                   "      ,[StudentAssessmentKey]",
-                  "      ,[StudentUSI]",
+                  "      ,[StudentSchoolKey]",
                   "      ,[AdministrationDate]",
                   "      ,[GradeLevel]",
                   "      ,[AcademicSubject]",
@@ -2854,7 +2853,7 @@
               "[AssessmentIdentifier]",
               "      ,[StudentAssessmentIdentifier]",
               "      ,[StudentAssessmentKey]",
-              "      ,[StudentUSI]",
+              "      ,[StudentSchoolKey]",
               "      ,[AdministrationDate]",
               "      ,[GradeLevel]",
               "      ,[AcademicSubject]",
@@ -2881,7 +2880,7 @@
               "[AssessmentIdentifier]",
               "      ,[StudentAssessmentIdentifier]",
               "      ,[StudentAssessmentKey]",
-              "      ,[StudentUSI]",
+              "      ,[StudentSchoolKey]",
               "      ,[AdministrationDate]",
               "      ,[GradeLevel]",
               "      ,[AcademicSubject]",
@@ -3589,12 +3588,6 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "StudentUSI",
-            "dataType": "string",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "Result",
             "dataType": "int64",
             "sourceColumn": "Result",
@@ -3633,7 +3626,12 @@
             "name": "ObjectiveAssessmentKey",
             "dataType": "string",
             "isDataTypeInferred": true,
-            "expression": "[AssessmentIdentifier] & \"^\" & [StudentUSI]"
+            "expression": "[AssessmentIdentifier] & \"^\" & [StudentSchoolKey]"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "string",
+            "sourceColumn": "StudentSchoolKey"
           }
         ],
         "partitions": [
@@ -3649,7 +3647,7 @@
                 "      ,[IdentificationCode]",
                 "      ,[Namespace]",
                 "      ,[StudentAssessmentIdentifier]",
-                "      ,[StudentUSI]",
+                "      ,[StudentSchoolKey]",
                 "      ,[Result]",
                 "      ,[ResultDatatype]",
                 "      ,StudentObjectiveAssessmentKey",
@@ -3667,7 +3665,7 @@
                   "      ,[IdentificationCode]",
                   "      ,[Namespace]",
                   "      ,[StudentAssessmentIdentifier]",
-                  "      ,[StudentUSI]",
+                  "      ,[StudentSchoolKey]",
                   "      ,[Result]",
                   "      ,[ResultDatatype]",
                   "      ,StudentObjectiveAssessmentKey",
@@ -3687,7 +3685,7 @@
               "      ,[IdentificationCode]",
               "      ,[Namespace]",
               "      ,[StudentAssessmentIdentifier]",
-              "      ,[StudentUSI]",
+              "      ,[StudentSchoolKey]",
               "      ,[Result]",
               "      ,[ResultDatatype]",
               "      ,StudentObjectiveAssessmentKey",
@@ -3711,7 +3709,7 @@
               "      ,[IdentificationCode]",
               "      ,[Namespace]",
               "      ,[StudentAssessmentIdentifier]",
-              "      ,[StudentUSI]",
+              "      ,[StudentSchoolKey]",
               "      ,[Result]",
               "      ,[ResultDatatype]",
               "      ,StudentObjectiveAssessmentKey",
@@ -3842,12 +3840,6 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "StudentUSI",
-            "dataType": "string",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "Result",
             "dataType": "int64",
             "sourceColumn": "Result",
@@ -3925,7 +3917,12 @@
             "name": "ObjectiveAssessmentKey",
             "dataType": "string",
             "isDataTypeInferred": true,
-            "expression": "[AssessmentIdentifier] & \"^\" & [StudentUSI]"
+            "expression": "[AssessmentIdentifier] & \"^\" & [StudentSchoolKey]"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "string",
+            "sourceColumn": "StudentSchoolKey"
           }
         ],
         "partitions": [
@@ -3941,7 +3938,7 @@
                 "      ,[IdentificationCode]",
                 "      ,[Namespace]",
                 "      ,[StudentAssessmentIdentifier]",
-                "      ,[StudentUSI]",
+                "      ,[StudentSchoolKey]",
                 "      ,[Result]",
                 "      ,[ResultDatatype]",
                 " ,StudentObjectiveAssessmentKey",
@@ -3959,7 +3956,7 @@
                   "      ,[IdentificationCode]",
                   "      ,[Namespace]",
                   "      ,[StudentAssessmentIdentifier]",
-                  "      ,[StudentUSI]",
+                  "      ,[StudentSchoolKey]",
                   "      ,[Result]",
                   "      ,[ResultDatatype]",
                   " ,StudentObjectiveAssessmentKey",
@@ -4025,7 +4022,7 @@
               "      ,[IdentificationCode]",
               "      ,[Namespace]",
               "      ,[StudentAssessmentIdentifier]",
-              "      ,[StudentUSI]",
+              "      ,[StudentSchoolKey]",
               "      ,[Result]",
               "      ,[ResultDatatype]",
               " ,StudentObjectiveAssessmentKey",
@@ -4049,7 +4046,7 @@
               "      ,[IdentificationCode]",
               "      ,[Namespace]",
               "      ,[StudentAssessmentIdentifier]",
-              "      ,[StudentUSI]",
+              "      ,[StudentSchoolKey]",
               "      ,[Result]",
               "      ,[ResultDatatype]",
               " ,StudentObjectiveAssessmentKey",
@@ -4181,12 +4178,6 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "StudentUSI",
-            "dataType": "int64",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "AdministrationDate",
             "dataType": "dateTime",
             "sourceColumn": "AdministrationDate",
@@ -4242,7 +4233,7 @@
             "isDataTypeInferred": true,
             "expression": [
               "",
-              "         [StudentUSI]",
+              "         [StudentSchoolKey]",
               " & \"^\" & [AssessmentIdentifier]",
               " & \"^\" & [StudentAssessmentIdentifier]"
             ]
@@ -4269,6 +4260,12 @@
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": "RELATED(Student[Current School ID])"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "int64",
+            "sourceColumn": "StudentUSI",
+            "sourceProviderType": "Integer"
           }
         ],
         "partitions": [
@@ -4359,12 +4356,6 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "StudentUSI",
-            "dataType": "int64",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "Result",
             "dataType": "int64",
             "sourceColumn": "Result",
@@ -4409,7 +4400,7 @@
             "isDataTypeInferred": true,
             "expression": [
               "",
-              "         [StudentUSI]",
+              "         [StudentSchoolKey]",
               " & \"^\" & [AssessmentIdentifier]",
               " & \"^\" & [StudentAssessmentIdentifier]"
             ]
@@ -4446,6 +4437,12 @@
               "BLANK()                                         ",
               ")))))))))))))))))))))"
             ]
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "int64",
+            "sourceColumn": "StudentUSI",
+            "sourceProviderType": "Integer"
           }
         ],
         "partitions": [
@@ -4566,12 +4563,6 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "StudentUSI",
-            "dataType": "int64",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "AdministrationDate",
             "dataType": "dateTime",
             "sourceColumn": "AdministrationDate",
@@ -4619,6 +4610,12 @@
             "dataType": "string",
             "sourceColumn": "Namespace",
             "sourceProviderType": "WChar"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "int64",
+            "sourceColumn": "StudentUSI",
+            "sourceProviderType": "Integer"
           }
         ],
         "partitions": [
@@ -4683,12 +4680,6 @@
             "dataType": "string",
             "sourceColumn": "StudentAssessmentIdentifier",
             "sourceProviderType": "WChar"
-          },
-          {
-            "name": "StudentUSI",
-            "dataType": "int64",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
           },
           {
             "name": "AdministrationDate",
@@ -4838,7 +4829,7 @@
             "isDataTypeInferred": true,
             "expression": [
               "",
-              "         [StudentUSI]",
+              "         [StudentSchoolKey]",
               " & \"^\" & [AssessmentIdentifier]",
               " & \"^\" & [StudentAssessmentIdentifier]"
             ]
@@ -4865,6 +4856,12 @@
               "YEAR([AdministrationEndDate]) + 1",
               "))"
             ]
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "int64",
+            "sourceColumn": "StudentUSI",
+            "sourceProviderType": "Integer"
           }
         ],
         "partitions": [
@@ -4956,12 +4953,6 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "StudentUSI",
-            "dataType": "int64",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "Result",
             "dataType": "string",
             "sourceColumn": "Result",
@@ -4972,6 +4963,12 @@
             "dataType": "string",
             "sourceColumn": "ResultDatatype",
             "sourceProviderType": "WChar"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "int64",
+            "sourceColumn": "StudentUSI",
+            "sourceProviderType": "Integer"
           }
         ],
         "partitions": [
@@ -5056,12 +5053,6 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "StudentUSI",
-            "dataType": "int64",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "Result",
             "dataType": "int64",
             "sourceColumn": "Result",
@@ -5092,7 +5083,7 @@
             "isDataTypeInferred": true,
             "expression": [
               "",
-              "         [StudentUSI]",
+              "         [StudentSchoolKey]",
               " & \"^\" & [AssessmentIdentifier]",
               " & \"^\" & [StudentAssessmentIdentifier]"
             ]
@@ -5101,6 +5092,12 @@
             "name": "ObjectiveDescription",
             "dataType": "string",
             "sourceColumn": "ObjectiveDescription"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "int64",
+            "sourceColumn": "StudentUSI",
+            "sourceProviderType": "Integer"
           }
         ],
         "partitions": [
@@ -5220,14 +5217,6 @@
           },
           {
             "type": "calculatedTableColumn",
-            "name": "StudentUSI",
-            "dataType": "string",
-            "isNameInferred": true,
-            "isDataTypeInferred": true,
-            "sourceColumn": "[StudentUSI]"
-          },
-          {
-            "type": "calculatedTableColumn",
             "name": "GradeLevel",
             "dataType": "string",
             "isNameInferred": true,
@@ -5262,7 +5251,7 @@
               "StudentAssessmentScoreResult[AssessmentIdentifier],StudentAssessmentScoreResultGrouped[AssessmentIdentifier],",
               "StudentAssessmentScoreResult[AssessmentReportingMethodTypeId],StudentAssessmentScoreResultGrouped[AssessmentReportingMethodTypeId],",
               "StudentAssessmentScoreResult[AssessmentTitle],StudentAssessmentScoreResultGrouped[AssessmentTitle],",
-              "StudentAssessmentScoreResult[StudentUSI],StudentAssessmentScoreResultGrouped[StudentUSI],",
+              "'StudentAssessmentScoreResult'[StudentSchoolKey],'StudentAssessmentScoreResultGrouped'[StudentSchoolKey],",
               "StudentAssessmentScoreResult[GradeLevel],StudentAssessmentScoreResultGrouped[GradeLevel],",
               "StudentAssessmentScoreResult[Namespace],StudentAssessmentScoreResultGrouped[Namespace],",
               "StudentAssessmentScoreResult[AdministrationDate],StudentAssessmentScoreResultGrouped[AdministrationDate])",
@@ -5283,7 +5272,7 @@
               "StudentAssessmentScoreResult[AssessmentIdentifier],StudentAssessmentScoreResultGrouped[AssessmentIdentifier],",
               "StudentAssessmentScoreResult[AssessmentReportingMethodTypeId],StudentAssessmentScoreResultGrouped[AssessmentReportingMethodTypeId],",
               "StudentAssessmentScoreResult[AssessmentTitle],StudentAssessmentScoreResultGrouped[AssessmentTitle],",
-              "StudentAssessmentScoreResult[StudentUSI],StudentAssessmentScoreResultGrouped[StudentUSI],",
+              "'StudentAssessmentScoreResult'[StudentSchoolKey],'StudentAssessmentScoreResultGrouped'[StudentSchoolKey],",
               "StudentAssessmentScoreResult[GradeLevel],StudentAssessmentScoreResultGrouped[GradeLevel],",
               "StudentAssessmentScoreResult[Namespace],StudentAssessmentScoreResultGrouped[Namespace],",
               "StudentAssessmentScoreResult[AdministrationDate],StudentAssessmentScoreResultGrouped[AdministrationDate])",
@@ -5330,7 +5319,7 @@
               "StudentAssessmentScoreResult[AssessmentIdentifier],StudentAssessmentScoreResultGrouped[AssessmentIdentifier],",
               "StudentAssessmentScoreResult[AssessmentReportingMethodTypeId],StudentAssessmentScoreResultGrouped[AssessmentReportingMethodTypeId],",
               "StudentAssessmentScoreResult[AssessmentTitle],StudentAssessmentScoreResultGrouped[AssessmentTitle],",
-              "StudentAssessmentScoreResult[StudentUSI],StudentAssessmentScoreResultGrouped[StudentUSI],",
+              "'StudentAssessmentScoreResult'[StudentSchoolKey],'StudentAssessmentScoreResultGrouped'[StudentSchoolKey],",
               "StudentAssessmentScoreResult[GradeLevel],StudentAssessmentScoreResultGrouped[GradeLevel],",
               "StudentAssessmentScoreResult[Namespace],StudentAssessmentScoreResultGrouped[Namespace],",
               "StudentAssessmentScoreResult[AdministrationDate],StudentAssessmentScoreResultGrouped[AdministrationDate])",
@@ -5345,6 +5334,14 @@
             "isNameInferred": true,
             "isDataTypeInferred": true,
             "sourceColumn": "[StudentAssessmentKey]"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "StudentSchoolKey",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[StudentSchoolKey]"
           }
         ],
         "partitions": [
@@ -5359,7 +5356,7 @@
                 "[AssessmentIdentifier],",
                 "[AssessmentReportingMethodTypeId],",
                 "[AssessmentTitle],",
-                "[StudentUSI],",
+                "[StudentSchoolKey],",
                 "[GradeLevel],",
                 "[Namespace],[StudentAssessmentKey],",
                 "\"AdministrationDate\",MAXX(CURRENTGROUP(),[AdministrationDate])",
@@ -5908,13 +5905,6 @@
     ],
     "relationships": [
       {
-        "name": "806f2297-b7f3-4cb2-8818-7958279252fc",
-        "fromTable": "StudentProgramAssociation",
-        "fromColumn": "StudentUSI",
-        "toTable": "Student",
-        "toColumn": "StudentUSI"
-      },
-      {
         "name": "3d542fa5-15a1-4a6d-b574-e10c0bd191f4",
         "fromTable": "StaffEducationOrganizationAssignmentAssociation",
         "fromColumn": "SchoolID",
@@ -5968,38 +5958,6 @@
         "crossFilteringBehavior": "bothDirections"
       },
       {
-        "name": "ff33b342-a96f-47a9-a66a-99950d7c0ba4",
-        "fromTable": "StudentSectionAssociation",
-        "fromColumn": "StudentUSI",
-        "toTable": "Student",
-        "toColumn": "StudentUSI",
-        "crossFilteringBehavior": "bothDirections"
-      },
-      {
-        "name": "2dcfb646-1065-4ff9-92d5-619416b9a567",
-        "fromTable": "iReady_StudentAssessmentScoreResult",
-        "fromColumn": "StudentUSI",
-        "toTable": "Student",
-        "toColumn": "StudentUSI",
-        "crossFilteringBehavior": "bothDirections"
-      },
-      {
-        "name": "041fcac9-d5dc-4984-b845-f62b290fbabd",
-        "fromTable": "StudentAssessmentScoreResult",
-        "fromColumn": "StudentUSI",
-        "toTable": "Student",
-        "toColumn": "StudentUSI",
-        "crossFilteringBehavior": "bothDirections"
-      },
-      {
-        "name": "8fd53a17-f173-447f-b791-34490bc8a520",
-        "fromTable": "MC_StudentAssessmentScoreResult",
-        "fromColumn": "StudentUSI",
-        "toTable": "Student",
-        "toColumn": "StudentUSI",
-        "crossFilteringBehavior": "bothDirections"
-      },
-      {
         "name": "9b7605a3-a2e2-444b-9f96-71ebc4ec40d0",
         "fromTable": "StudentAssessmentStudentObjectiveAssessmentScoreResult",
         "fromColumn": "ObjectiveAssessmentKey",
@@ -6027,6 +5985,45 @@
         "fromColumn": "StudentSectionKey",
         "toTable": "StudentSectionAssociation",
         "toColumn": "StudentSectionKey",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "a2125f52-ce7b-49f2-b3f1-036f35ad90dd",
+        "fromTable": "iReady_StudentAssessmentScoreResult",
+        "fromColumn": "StudentSchoolKey",
+        "toTable": "Student",
+        "toColumn": "StudentSchoolKey",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "239da02c-cef8-4fe4-9d23-6f4039b32434",
+        "fromTable": "MC_StudentAssessmentScoreResult",
+        "fromColumn": "StudentSchoolKey",
+        "toTable": "Student",
+        "toColumn": "StudentSchoolKey",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "70b885ec-d280-414a-8f5e-3ee437c52596",
+        "fromTable": "StudentAssessmentScoreResult",
+        "fromColumn": "StudentSchoolKey",
+        "toTable": "Student",
+        "toColumn": "StudentSchoolKey",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "f140b3e3-0ca9-460f-abe5-67b99623fe01",
+        "fromTable": "StudentProgramAssociation",
+        "fromColumn": "StudentSchoolKey",
+        "toTable": "Student",
+        "toColumn": "StudentSchoolKey"
+      },
+      {
+        "name": "ad4c5c45-8454-4508-b8ef-1764f34b4086",
+        "fromTable": "StudentSectionAssociation",
+        "fromColumn": "StudentSchoolKey",
+        "toTable": "Student",
+        "toColumn": "StudentSchoolKey",
         "crossFilteringBehavior": "bothDirections"
       }
     ],
@@ -6134,5 +6131,6 @@
         "value": "400"
       }
     ]
-  }
+  },
+  "id": "SemanticModel"
 }
