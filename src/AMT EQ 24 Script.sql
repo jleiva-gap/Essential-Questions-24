@@ -11,7 +11,7 @@ BEGIN
   RETURN;
 END;
 GO
-/****** Object:  View [BI].[amt.EducationOrganization]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[amt.EducationOrganization]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -26,11 +26,14 @@ AS
     FROM 
          analytics.SchoolDim;
 GO
-/****** Object:  View [BI].[amt.Grade]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[amt.Grade]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 CREATE OR ALTER VIEW [BI].[amt.Grade]
 AS
     SELECT 
@@ -44,7 +47,7 @@ AS
            StudentSectionDim.SectionKey AS SectionKey, 
            StudentSectionDim.LocalCourseCode AS LocalCourseCode, 
            SchoolDim.LocalEducationAgencyKey AS LocalEducationAgencyId, 
-           SchoolDim.SchoolKey AS SchoolId, 
+           SchoolDim.SchoolKey AS SchoolKey, 
            StudentSectionDim.SchoolYear AS SchoolYear, 
            COALESCE(StudentSectionStartDate.Date, CAST(StudentSectionDim.StudentSectionStartDateKey AS DATETIME)) AS SectionBeginDate, 
            COALESCE(StudentSectionEndDate.Date, CAST(StudentSectionDim.StudentSectionEndDateKey AS DATETIME)) AS SectionEndDate, 
@@ -53,7 +56,8 @@ AS
            StudentSectionDim.Subject AS Subject, 
            '' AS Term, 
            '' AS UniqueSectionCode, 
-           ews_StudentSectionGradeFact.GradingPeriodKey
+           ews_StudentSectionGradeFact.GradingPeriodKey,
+           StudentSectionDim.StudentSectionKey
     FROM 
          analytics.ews_StudentSectionGradeFact
     INNER JOIN
@@ -79,38 +83,41 @@ AS
             analytics.ews_StudentSectionGradeFact.GradingPeriodKey = analytics.GradingPeriodDim.GradingPeriodKey
     LEFT JOIN
         analytics.DateDim BeginDate ON
-            GradingPeriodDim.GradingPeriodBeginDateKey = BeginDate.DateKey;
-
+            GradingPeriodDim.GradingPeriodBeginDateKey = BeginDate.DateKey
+    WHERE StudentSectionDim.Subject='Mathematics'
 --WHERE    SUBSTRING(g.LocalCourseCode,11,2) in ( '12') --this filter selects math courses only for Florida districts.
 
 GO
-/****** Object:  View [BI].[amt.School]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[amt.School]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE OR ALTER VIEW [BI].[amt.School]
 AS
     SELECT 
            SchoolDim.LocalEducationAgencyKey AS LocalEducationAgencyId, 
            SchoolDim.SchoolName AS SchoolName, 
-           SchoolDim.SchoolKey AS SchoolId, 
+           SchoolDim.SchoolKey AS SchoolKey, 
            SchoolDim.SchoolType AS SchoolType
     FROM 
          [analytics].[SchoolDim];
 GO
-/****** Object:  View [BI].[amt.Section]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[amt.Section]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 CREATE OR ALTER VIEW [BI].[amt.Section]
 AS
     SELECT 
-           s.[SchoolId], 
+           CAST(s.SchoolId AS VARCHAR) as SchoolKey, 
            CAST(s.SchoolId AS NVARCHAR) + '-' + s.LocalCourseCode + '-' + CAST(s.SchoolYear AS NVARCHAR) + '-' + s.SectionIdentifier + '-' + s.SessionName AS SectionKey, 
            '' [ClassPeriodName], 
-           '' [ClassroomIdentificationCode], 
+           [LocationClassroomIdentificationCode] [ClassroomIdentificationCode], 
            [LocalCourseCode], 
            '' AS Term, 
            [SchoolYear], 
@@ -126,7 +133,7 @@ AS
         [edfi].[School] sch ON
             s.SchoolId = sch.SchoolId;
 GO
-/****** Object:  View [BI].[amt.Staff]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[amt.Staff]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -202,16 +209,17 @@ AS
         edfi.Descriptor AS RT ON
             RaceDisp.Race = RT.DescriptorId;
 GO
-/****** Object:  View [BI].[amt.StaffEducationOrganizationAssignmentAssociation]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[amt.StaffEducationOrganizationAssignmentAssociation]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE OR ALTER VIEW [BI].[amt.StaffEducationOrganizationAssignmentAssociation]
 AS
     SELECT 
            StaffUSI, 
-           seoaa.EducationOrganizationId AS SchoolID, 
+           cast(seoaa.EducationOrganizationId AS varchar(500)) AS SchoolKey, 
            eo.NameOfInstitution AS School, 
            sch.LocalEducationAgencyId, 
            eo2.NameOfInstitution AS District, 
@@ -257,21 +265,23 @@ AS
                                      [bi].[eq24.YearStart]()
                               ) + 1);
 GO
-/****** Object:  View [BI].[amt.StaffSectionAssociation]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[amt.StaffSectionAssociation]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 CREATE OR ALTER VIEW [BI].[amt.StaffSectionAssociation]
 AS
     SELECT 
            [StaffUSI], 
-           '' [ClassroomIdentificationCode], 
-           ssa.[SchoolId], 
+           LocationClassroomIdentificationCode [ClassroomIdentificationCode], 
+           CAST(ssa.[SchoolId] AS VARCHAR) AS SChoolKey, 
            CAST(s.SchoolId AS NVARCHAR) + '-' + ssa.LocalCourseCode + '-' + CAST(ssa.SchoolYear AS NVARCHAR) + '-' + ssa.SectionIdentifier + '-' + ssa.SessionName AS SectionKey, 
            '' [ClassPeriodName], 
-           [LocalCourseCode], 
-           [SchoolYear], 
+           ssa.[LocalCourseCode], 
+           ssa.[SchoolYear], 
            '' AS Term, 
            '' [UniqueSectionCode], 
            d2.ShortDescription AS ClassroomPosition, 
@@ -280,6 +290,12 @@ AS
            s.LocalEducationAgencyId
     FROM 
          [edfi].[StaffSectionAssociation] ssa
+    INNER JOIN edfi.Section
+    ON Section.LocalCourseCode = ssa.LocalCourseCode
+    AND Section.SchoolId = ssa.SchoolId
+    AND Section.SchoolYear = ssa.SchoolYear
+    AND Section.SectionIdentifier = ssa.SectionIdentifier
+    AND Section.SessionName = ssa.SessionName
     LEFT JOIN
         [edfi].[Descriptor] d2 ON
             ssa.ClassroomPositionDescriptorId = d2.DescriptorId
@@ -287,11 +303,12 @@ AS
         [edfi].[School] s ON
             ssa.SchoolId = s.SchoolId;
 GO
-/****** Object:  View [BI].[amt.Student]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[amt.Student]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE OR ALTER VIEW [BI].[amt.Student]
 AS
     SELECT 
@@ -308,7 +325,7 @@ AS
            '' AS OldEthnicityTypeId, 
            StudentSchoolDim.Sex AS SexType, 
            StudentSchoolDim.StudentSchoolKey AS StudentUniqueId, 
-           StudentSchoolDim.StudentSchoolKey AS StudentUSI
+           StudentSchoolDim.StudentSchoolKey AS StudentSchoolKey 
     FROM 
          [analytics].[StudentSchoolDim]
     OUTER APPLY
@@ -339,11 +356,12 @@ AS
                   StudentSchoolDemographicsBridge.StudentSchoolKey = StudentSchoolDim.StudentSchoolKey
         ) AS DemographicsEconomicDisadvantaged;
 GO
-/****** Object:  View [BI].[amt.StudentAssessmentPerformanceLevel]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[amt.StudentAssessmentPerformanceLevel]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE OR ALTER VIEW [BI].[amt.StudentAssessmentPerformanceLevel]
 AS
     SELECT DISTINCT 
@@ -351,7 +369,7 @@ AS
            asmt_StudentAssessmentFact.AssessmentKey AS AssessmentIdentifier, 
            asmt_StudentAssessmentFact.StudentAssessmentKey, 
            asmt_StudentAssessmentFact.StudentAssessmentKey AS StudentAssessmentIdentifier, 
-           asmt_StudentAssessmentFact.StudentSchoolKey AS StudentUSI, 
+           asmt_StudentAssessmentFact.StudentSchoolKey AS StudentSchoolKey, 
            COALESCE(DateDim.Date, CAST(asmt_StudentAssessmentFact.[AdministrationDate] AS DATETIME)) AS AdministrationDate, 
            asmt_AssessmentDim.AssessedGradeLevel AS GradeLevel, 
            asmt_AssessmentDim.AcademicSubject AS AcademicSubject, 
@@ -374,11 +392,12 @@ AS
     AND asmt_AssessmentDim.AcademicSubject IN('Mathematics')
          AND asmt_AssessmentDim.Title NOT IN('Curriculum Associates i-Ready Math Diagnostic', 'ACT', 'PERT', 'PER', 'PSANM', 'SAT 2016', 'PSAT 89');
 GO
-/****** Object:  View [BI].[amt.StudentAssessmentScoreResult]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[amt.StudentAssessmentScoreResult]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE OR ALTER VIEW [BI].[amt.StudentAssessmentScoreResult]
 AS
     SELECT DISTINCT 
@@ -386,7 +405,7 @@ AS
            asmt_StudentAssessmentFact.AssessmentKey AS AssessmentIdentifier, 
            asmt_StudentAssessmentFact.StudentAssessmentKey, 
            asmt_StudentAssessmentFact.StudentAssessmentKey AS StudentAssessmentIdentifier, 
-           asmt_StudentAssessmentFact.StudentSchoolKey AS StudentUSI, 
+           asmt_StudentAssessmentFact.StudentSchoolKey AS StudentSchoolKey, 
            COALESCE(DateDim.Date, CAST(asmt_StudentAssessmentFact.[AdministrationDate] AS DATETIME)) AS AdministrationDate, 
            asmt_AssessmentDim.AssessedGradeLevel AS GradeLevel, 
            asmt_AssessmentDim.AcademicSubject AS AcademicSubject, 
@@ -411,11 +430,12 @@ AS
     AND asmt_AssessmentDim.AcademicSubject IN('Mathematics')
          AND asmt_AssessmentDim.Title NOT IN('Curriculum Associates i-Ready Math Diagnostic', 'ACT', 'PERT', 'PER', 'PSANM', 'SAT 2016', 'PSAT 89');
 GO
-/****** Object:  View [BI].[amt.StudentAssessmentStudentObjectiveAssessmentPointsPossible]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[amt.StudentAssessmentStudentObjectiveAssessmentPointsPossible]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE OR ALTER VIEW [BI].[amt.StudentAssessmentStudentObjectiveAssessmentPointsPossible]
 AS
     SELECT DISTINCT 
@@ -426,7 +446,7 @@ AS
            asmt_ObjectiveAssessmentDim.IdentificationCode AS IdentificationCode, 
            asmt_StudentAssessmentObjectiveFact.Namespace AS Namespace, 
            asmt_StudentAssessmentObjectiveFact.[StudentObjectiveAssessmentKey] AS StudentAssessmentIdentifier, 
-           asmt_StudentAssessmentObjectiveFact.[StudentSchoolKey] AS StudentUSI, 
+           asmt_StudentAssessmentObjectiveFact.[StudentSchoolKey] AS StudentSchoolKey, 
            asmt_StudentAssessmentObjectiveFact.[StudentScore] AS Result, 
            asmt_StudentAssessmentObjectiveFact.[ResultDataType] AS ResultDatatype
     FROM 
@@ -441,11 +461,12 @@ AS
  AND  StudentAssessmentIdentifier like '%_Mathematics_%'*/
 
 GO
-/****** Object:  View [BI].[AMT.StudentAssessmentStudentObjectiveAssessmentScoreResult]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[AMT.StudentAssessmentStudentObjectiveAssessmentScoreResult]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE OR ALTER VIEW [BI].[AMT.StudentAssessmentStudentObjectiveAssessmentScoreResult]
 AS
     SELECT DISTINCT 
@@ -456,7 +477,7 @@ AS
            asmt_ObjectiveAssessmentDim.IdentificationCode AS IdentificationCode, 
            asmt_StudentAssessmentObjectiveFact.Namespace AS Namespace, 
            asmt_StudentAssessmentObjectiveFact.[StudentObjectiveAssessmentKey] AS StudentAssessmentIdentifier, 
-           asmt_StudentAssessmentObjectiveFact.[StudentSchoolKey] AS StudentUSI, 
+           asmt_StudentAssessmentObjectiveFact.[StudentSchoolKey] AS StudentSchoolKey, 
            asmt_StudentAssessmentObjectiveFact.[StudentScore] AS Result, 
            asmt_StudentAssessmentObjectiveFact.[ResultDataType] AS ResultDatatype
     FROM 
@@ -471,15 +492,16 @@ AS
  AND StudentAssessmentIdentifier like '%_Mathematics_%'*/
 
 GO
-/****** Object:  View [BI].[amt.StudentProgramAssociation]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[amt.StudentProgramAssociation]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE OR ALTER VIEW [BI].[amt.StudentProgramAssociation]
 AS
     SELECT 
-           CONCAT(student.StudentUniqueId, '-', SchoolId) AS [StudentUSI], 
+           CONCAT(student.StudentUniqueId, '-', SchoolId) AS StudentSchoolKey, 
            [ProgramName], 
            MAX([BeginDate]) AS BeginDate, 
            NULL [EndDate]
@@ -502,16 +524,18 @@ AS
              [ProgramName];
 -- ,[EndDate]
 GO
-/****** Object:  View [BI].[amt.StudentSchoolAssociation]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[amt.StudentSchoolAssociation]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 CREATE OR ALTER VIEW [BI].[amt.StudentSchoolAssociation]
 AS
     SELECT 
-           StudentSchoolDim.[StudentSchoolKey] AS StudentUSI, 
-           StudentSchoolDim.[SchoolKey] AS SchoolId, 
+           StudentSchoolDim.[StudentSchoolKey] AS StudentSchoolKey, 
+           StudentSchoolDim.[SchoolKey] AS [SchoolKey], 
            SchoolDim.[SchoolName] AS NameOfInstitution, 
            StudentSchoolDim.[SchoolYear] AS SchoolYear, 
            StudentSchoolDim.[EnrollmentDateKey] AS EntryDate, 
@@ -530,17 +554,19 @@ AS
         [analytics].[SchoolDim] ON
             StudentSchoolDim.[SchoolKey] = SchoolDim.[SchoolKey];
 GO
-/****** Object:  View [BI].[amt.StudentSectionAssociation]    Script Date: 2/18/2021 2:15:06 PM ******/
+/****** Object:  View [BI].[amt.StudentSectionAssociation]    Script Date: 3/4/2021 4:00:33 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 CREATE OR ALTER VIEW [BI].[amt.StudentSectionAssociation]
 AS
     SELECT 
-           CONCAT(StudentSectionDim.[StudentKey], '-', StudentSectionDim.[SchoolKey]) AS StudentUSI, 
+           CONCAT(StudentSectionDim.[StudentKey], '-', StudentSectionDim.[SchoolKey]) AS StudentSchoolKey, 
            StudentSectionDim.StudentSectionKey, 
-           StudentSectionDim.SchoolKey AS SchoolId, 
+           StudentSectionDim.SchoolKey AS SchoolKey, 
            StudentSectionDim.SectionKey, 
            '' AS ClassPeriodName, 
            '' AS ClassroomIdentificationCode, 
