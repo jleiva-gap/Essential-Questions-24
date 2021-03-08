@@ -815,6 +815,11 @@
             "name": "StudentSchoolKey",
             "dataType": "string",
             "sourceColumn": "StudentSchoolKey"
+          },
+          {
+            "name": "OldEthnicityTypeId",
+            "dataType": "string",
+            "sourceColumn": "OldEthnicityTypeId"
           }
         ],
         "partitions": [
@@ -880,8 +885,8 @@
               "        FILTER (",
               "            StudentSchoolAssociation,",
               "            StudentSchoolAssociation[ExitWithdrawDate] = BLANK ()",
-              "                && 'StudentSchoolAssociation'[SchoolKey] <> 383518",
-              "                && 'StudentSchoolAssociation'[SchoolKey] <> 150022",
+              "                && 'StudentSchoolAssociation'[SchoolKey] <> \"383518\"",
+              "                && 'StudentSchoolAssociation'[SchoolKey] <> \"150022\"",
               "        ),",
               "        [StudentSchoolKey],",
               "        \"CurrentGrade\", MIN ( 'StudentSchoolAssociation'[GradeLevel*] )",
@@ -902,10 +907,10 @@
               "            StudentSchoolAssociation[ExitWithdrawDate] = BLANK ()",
               "        ),",
               "        [StudentSchoolKey],",
-              "        \"SchoolId\", MIN ( 'StudentSchoolAssociation'[SchoolKey] )",
+              "        \"SchoolKey\", MIN ( 'StudentSchoolAssociation'[SchoolKey] )",
               "    )",
               "RETURN",
-              "    CALCULATE ( AVERAGEX ( CurrentSchoolTable, VALUE ( [SchoolId] ) ) )"
+              "    CALCULATE ( AVERAGEX ( CurrentSchoolTable, VALUE ( [SchoolKey] ) ) )"
             ],
             "isHidden": true
           },
@@ -2039,6 +2044,7 @@
               "    Grade[SchoolYear], StudentCourseCurrent[SchoolYear],",
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[LocalEducationAgencyId], StudentCourseCurrent[LocalEducationAgencyId]",
               ")",
               "/*",
@@ -2062,6 +2068,7 @@
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "    'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[GradeType], \"Grading Period\",",
               "    Grade[GradingPeriod], \"First Nine Weeks\",",
               "    Grade[Subject], StudentCourseCurrent[Subject]",
@@ -2089,6 +2096,7 @@
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "    'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[GradeType], \"Grading Period\",",
               "    Grade[GradingPeriod], \"Second Nine Weeks\"",
               ")"
@@ -2106,6 +2114,7 @@
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "    'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[GradeType], \"Semester\",",
               "    Grade[GradingPeriod], \"First Semester\"",
               ")"
@@ -2123,6 +2132,7 @@
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "    'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[GradeType], \"Grading Period\",",
               "    Grade[GradingPeriod], \"Third Nine Weeks\"",
               ")"
@@ -2140,6 +2150,7 @@
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "    'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[GradeType], \"Grading Period\",",
               "    Grade[GradingPeriod], \"Fourth Nine Weeks\"",
               ")"
@@ -2157,6 +2168,7 @@
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "    'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[GradeType], \"Semester\",",
               "    Grade[GradingPeriod], \"Second Semester\"",
               ")"
@@ -2189,6 +2201,7 @@
               "            Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "            Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "            Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "            Grade[GradingPeriod], \"End of Year\"",
               "        )",
               "            = BLANK (),",
@@ -2232,6 +2245,7 @@
               "            Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "            Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "            Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "            Grade[GradingPeriod], \"End of Year\"",
               "        )",
               "    )"
@@ -2280,6 +2294,7 @@
               "LOOKUPVALUE (",
               "    Grade[SectionEndDate],",
               "    'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[SchoolYear], StudentCourseCurrent[SchoolYear],",
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
@@ -2329,10 +2344,12 @@
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "    'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[GradeType], \"Grading Period\",",
               "    Grade[GradingPeriod], \"First Nine Weeks\",",
               "    Grade[Subject], StudentCourseCurrent[Subject]",
               ")",
+              "",
               "/*LOOKUPVALUE(Grade[GradeEarned], Grade[LocalCourseCode],StudentCourseCurrent[LocalCourseCode],",
               "                            Grade[UniqueSectionCode],StudentCourseCurrent[UniqueSectionCode],",
               "                            Grade[SectionBeginDate],StudentCourseCurrent[SectionBeginDate],",
@@ -2356,6 +2373,7 @@
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "    'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[GradeType], \"Grading Period\",",
               "    Grade[GradingPeriod], \"Second Nine Weeks\"",
               ")"
@@ -2373,6 +2391,7 @@
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "    'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[GradeType], \"Semester\",",
               "    Grade[GradingPeriod], \"First Semester\"",
               ")"
@@ -2390,6 +2409,7 @@
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "    'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[GradeType], \"Grading Period\",",
               "    Grade[GradingPeriod], \"Third Nine Weeks\"",
               ")"
@@ -2407,6 +2427,7 @@
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "    'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[GradeType], \"Grading Period\",",
               "    Grade[GradingPeriod], \"Fourth Nine Weeks\"",
               ")"
@@ -2424,6 +2445,7 @@
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "    'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[GradeType], \"Semester\",",
               "    Grade[GradingPeriod], \"Second Semester\"",
               ")"
@@ -2441,6 +2463,7 @@
               "    Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "    Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "    'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "    Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "    Grade[GradeType], \"Final\",",
               "    Grade[GradingPeriod], \"End of Year\"",
               ")"
@@ -2472,6 +2495,7 @@
               "            Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "            Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "            Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "            Grade[GradingPeriod], \"End of Year\"",
               "        )",
               "            = BLANK (),",
@@ -2520,6 +2544,7 @@
               "            Grade[LocalCourseCode], StudentCourseCurrent[LocalCourseCode],",
               "            Grade[SectionBeginDate], StudentCourseCurrent[SectionBeginDate],",
               "            'Grade'[StudentSchoolKey], 'StudentCourseCurrent'[StudentSchoolKey],",
+              "            Grade[GradingPeriodKey], StudentCourseCurrent[GradingPeriodKey],",
               "            Grade[GradingPeriod], \"End of Year\"",
               "        )",
               "    )"
@@ -2617,9 +2642,9 @@
           },
           {
             "type": "calculatedTableColumn",
-            "name": "Grade_GradingPeriodKey",
+            "name": "GradingPeriodKey",
             "dataType": "string",
-            "isNameInferred": true,
+            "isNameInferred": false,
             "isDataTypeInferred": true,
             "sourceColumn": "Grade[GradingPeriodKey]"
           },
@@ -4538,12 +4563,6 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "AssessmentReportingMethodTypeId",
-            "dataType": "int64",
-            "sourceColumn": "AssessmentReportingMethodTypeId",
-            "sourceProviderType": "Integer"
-          },
-          {
             "name": "IdentificationCode",
             "dataType": "string",
             "sourceColumn": "IdentificationCode",
@@ -4553,18 +4572,6 @@
             "name": "Namespace",
             "dataType": "string",
             "sourceColumn": "Namespace",
-            "sourceProviderType": "WChar"
-          },
-          {
-            "name": "PerformanceLevelDescriptorId",
-            "dataType": "int64",
-            "sourceColumn": "PerformanceLevelDescriptorId",
-            "sourceProviderType": "Integer"
-          },
-          {
-            "name": "Description",
-            "dataType": "string",
-            "sourceColumn": "Description",
             "sourceProviderType": "WChar"
           },
           {
@@ -4580,10 +4587,19 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "ResultDatatypeTypeId",
-            "dataType": "int64",
-            "sourceColumn": "ResultDatatypeTypeId",
-            "sourceProviderType": "Integer"
+            "name": "ReportingMethod",
+            "dataType": "string",
+            "sourceColumn": "ReportingMethod"
+          },
+          {
+            "name": "PerformanceResult",
+            "dataType": "string",
+            "sourceColumn": "PerformanceResult"
+          },
+          {
+            "name": "ResultDataType",
+            "dataType": "string",
+            "sourceColumn": "ResultDataType"
           }
         ],
         "partitions": [
@@ -4593,8 +4609,17 @@
             "source": {
               "type": "query",
               "query": [
-                "SELECT [bi].[eq24.MC_ObjectiveAssessmentPerformanceLevel].*",
-                " FROM [bi].[eq24.MC_ObjectiveAssessmentPerformanceLevel]"
+                "SELECT ",
+                "       AssessmentIdentifier, ",
+                "       ReportingMethod, ",
+                "       IdentificationCode, ",
+                "       Namespace, ",
+                "       PerformanceResult, ",
+                "       MinimumScore, ",
+                "       MaximumScore, ",
+                "       ResultDataType",
+                "FROM ",
+                "     BI.[amt.MC_ObjectiveAssessmentPerformanceLevel];"
               ],
               "dataSource": "EdFi ODS"
             },
@@ -4602,8 +4627,17 @@
               {
                 "name": "QueryEditorSerialization",
                 "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [bi].[eq24.MC_ObjectiveAssessmentPerformanceLevel].*",
-                  " FROM [bi].[eq24.MC_ObjectiveAssessmentPerformanceLevel]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT ",
+                  "       AssessmentIdentifier, ",
+                  "       ReportingMethod, ",
+                  "       IdentificationCode, ",
+                  "       Namespace, ",
+                  "       PerformanceResult, ",
+                  "       MinimumScore, ",
+                  "       MaximumScore, ",
+                  "       ResultDataType",
+                  "FROM ",
+                  "     BI.[amt.MC_ObjectiveAssessmentPerformanceLevel];</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
                 ]
               }
             ]
@@ -4613,8 +4647,17 @@
           {
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
-              "SELECT [bi].[eq24.MC_ObjectiveAssessmentPerformanceLevel].*",
-              " FROM [bi].[eq24.MC_ObjectiveAssessmentPerformanceLevel]"
+              "SELECT ",
+              "       AssessmentIdentifier, ",
+              "       ReportingMethod, ",
+              "       IdentificationCode, ",
+              "       Namespace, ",
+              "       PerformanceResult, ",
+              "       MinimumScore, ",
+              "       MaximumScore, ",
+              "       ResultDataType",
+              "FROM ",
+              "     BI.[amt.MC_ObjectiveAssessmentPerformanceLevel];"
             ]
           },
           {
@@ -4628,8 +4671,17 @@
           {
             "name": "QueryEditorSerialization",
             "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [bi].[eq24.MC_ObjectiveAssessmentPerformanceLevel].*",
-              " FROM [bi].[eq24.MC_ObjectiveAssessmentPerformanceLevel]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT ",
+              "       AssessmentIdentifier, ",
+              "       ReportingMethod, ",
+              "       IdentificationCode, ",
+              "       Namespace, ",
+              "       PerformanceResult, ",
+              "       MinimumScore, ",
+              "       MaximumScore, ",
+              "       ResultDataType",
+              "FROM ",
+              "     BI.[amt.MC_ObjectiveAssessmentPerformanceLevel];</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -4669,18 +4721,6 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "AssessmentReportingMethodTypeId",
-            "dataType": "int64",
-            "sourceColumn": "AssessmentReportingMethodTypeId",
-            "sourceProviderType": "Integer"
-          },
-          {
-            "name": "AssessmentTitle",
-            "dataType": "string",
-            "sourceColumn": "AssessmentTitle",
-            "sourceProviderType": "WChar"
-          },
-          {
             "name": "Result",
             "dataType": "string",
             "sourceColumn": "Result",
@@ -4701,12 +4741,12 @@
           {
             "type": "calculated",
             "name": "ObjectiveAssessmentKey",
-            "dataType": "unknown",
+            "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              "[AssessmentIdentifier] & \"^\" &      [StudentSchoolKey]",
+              " [StudentSchoolKey]",
               " & \"^\" & [AssessmentIdentifier]",
-              " & \"^\" & [StudentAssessmentIdentifier"
+              " & \"^\" & [StudentAssessmentIdentifier]"
             ]
           },
           {
@@ -4726,17 +4766,26 @@
             ]
           },
           {
-            "name": "StudentSchoolKey",
-            "dataType": "int64",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
-          {
             "type": "calculated",
             "name": "Current School Key",
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": "RELATED(Student[Current School ID])"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "string",
+            "sourceColumn": "StudentSchoolKey"
+          },
+          {
+            "name": "ReportingMethod",
+            "dataType": "string",
+            "sourceColumn": "ReportingMethod"
+          },
+          {
+            "name": "Title",
+            "dataType": "string",
+            "sourceColumn": "Title"
           }
         ],
         "partitions": [
@@ -4746,8 +4795,19 @@
             "source": {
               "type": "query",
               "query": [
-                "SELECT [bi].[eq24.MC_StudentAssessmentScoreResult].* ",
-                "FROM [bi].[eq24.MC_StudentAssessmentScoreResult]"
+                "SELECT ",
+                "       AssessmentIdentifier, ",
+                "       StudentAssessmentIdentifier, ",
+                "       StudentSchoolKey, ",
+                "       AdministrationDate, ",
+                "       AcademicSubject, ",
+                "       ReportingMethod, ",
+                "       Title, ",
+                "       Result, ",
+                "       Version, ",
+                "       Namespace",
+                "FROM ",
+                "     BI.[amt.MC_StudentAssessmentScoreResult];"
               ],
               "dataSource": "EdFi ODS"
             },
@@ -4755,8 +4815,19 @@
               {
                 "name": "QueryEditorSerialization",
                 "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [bi].[eq24.MC_StudentAssessmentScoreResult].* ",
-                  "FROM [bi].[eq24.MC_StudentAssessmentScoreResult]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT ",
+                  "       AssessmentIdentifier, ",
+                  "       StudentAssessmentIdentifier, ",
+                  "       StudentSchoolKey, ",
+                  "       AdministrationDate, ",
+                  "       AcademicSubject, ",
+                  "       ReportingMethod, ",
+                  "       Title, ",
+                  "       Result, ",
+                  "       Version, ",
+                  "       Namespace",
+                  "FROM ",
+                  "     BI.[amt.MC_StudentAssessmentScoreResult];</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
                 ]
               }
             ]
@@ -4766,8 +4837,19 @@
           {
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
-              "SELECT [bi].[eq24.MC_StudentAssessmentScoreResult].* ",
-              "FROM [bi].[eq24.MC_StudentAssessmentScoreResult]"
+              "SELECT ",
+              "       AssessmentIdentifier, ",
+              "       StudentAssessmentIdentifier, ",
+              "       StudentSchoolKey, ",
+              "       AdministrationDate, ",
+              "       AcademicSubject, ",
+              "       ReportingMethod, ",
+              "       Title, ",
+              "       Result, ",
+              "       Version, ",
+              "       Namespace",
+              "FROM ",
+              "     BI.[amt.MC_StudentAssessmentScoreResult];"
             ]
           },
           {
@@ -4781,8 +4863,19 @@
           {
             "name": "QueryEditorSerialization",
             "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [bi].[eq24.MC_StudentAssessmentScoreResult].* ",
-              "FROM [bi].[eq24.MC_StudentAssessmentScoreResult]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT ",
+              "       AssessmentIdentifier, ",
+              "       StudentAssessmentIdentifier, ",
+              "       StudentSchoolKey, ",
+              "       AdministrationDate, ",
+              "       AcademicSubject, ",
+              "       ReportingMethod, ",
+              "       Title, ",
+              "       Result, ",
+              "       Version, ",
+              "       Namespace",
+              "FROM ",
+              "     BI.[amt.MC_StudentAssessmentScoreResult];</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -4800,18 +4893,6 @@
             "name": "ReportingMethod",
             "dataType": "string",
             "sourceColumn": "ReportingMethod",
-            "sourceProviderType": "WChar"
-          },
-          {
-            "name": "IdentificationCode",
-            "dataType": "string",
-            "sourceColumn": "IdentificationCode",
-            "sourceProviderType": "WChar"
-          },
-          {
-            "name": "ObjejctiveDescription",
-            "dataType": "string",
-            "sourceColumn": "ObjejctiveDescription",
             "sourceProviderType": "WChar"
           },
           {
@@ -4839,18 +4920,6 @@
             "sourceColumn": "MaxRawScore",
             "formatString": "0",
             "sourceProviderType": "Integer"
-          },
-          {
-            "name": "LearningStandardItemCode",
-            "dataType": "string",
-            "sourceColumn": "LearningStandardItemCode",
-            "sourceProviderType": "WChar"
-          },
-          {
-            "name": "LearningStandardDescription",
-            "dataType": "string",
-            "sourceColumn": "LearningStandardDescription",
-            "sourceProviderType": "WChar"
           },
           {
             "name": "PerformanceLevel",
@@ -4883,8 +4952,8 @@
             "isDataTypeInferred": true,
             "expression": [
               "",
-              "",
-              "IF(CONTAINSSTRING([LearningStandardItemCode],\"MAFS.6.RP.\") = TRUE(),\"Ratio and Proportional Relationships\",",
+              "\"\"",
+              "/*IF(CONTAINSSTRING([LearningStandardItemCode],\"MAFS.6.RP.\") = TRUE(),\"Ratio and Proportional Relationships\",",
               "IF(CONTAINSSTRING([LearningStandardItemCode],\"MAFS.7.RP.\") = TRUE(),\"Ratio and Proportional Relationships\",",
               "IF(CONTAINSSTRING([LearningStandardItemCode],\"MAFS.6.EE\") = TRUE(),\"Expressions and Equations\",",
               "IF(CONTAINSSTRING([LearningStandardItemCode],\"MAFS.7.EE\") = TRUE(),\"Expressions and Equations\",",
@@ -4906,14 +4975,18 @@
               "IF(CONTAINSSTRING([LearningStandardItemCode],\"MAFS.8.NS\") = TRUE(),\"The Number System\",",
               "IF(CONTAINSSTRING([LearningStandardItemCode],{\"MAFS.8.F\"}) = TRUE(),\"Functions\",",
               "BLANK()                                         ",
-              ")))))))))))))))))))))"
+              ")))))))))))))))))))))*/"
             ]
           },
           {
+            "name": "ObjectiveDescription",
+            "dataType": "string",
+            "sourceColumn": "ObjectiveDescription"
+          },
+          {
             "name": "StudentSchoolKey",
-            "dataType": "int64",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
+            "dataType": "string",
+            "sourceColumn": "StudentSchoolKey"
           }
         ],
         "partitions": [
@@ -4923,8 +4996,19 @@
             "source": {
               "type": "query",
               "query": [
-                "SELECT [bi].[eq24.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult].*",
-                " FROM [bi].[eq24.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult]"
+                "SELECT ",
+                "       AssessmentIdentifier, ",
+                "       ReportingMethod, ",
+                "       ObjectiveDescription, ",
+                "       Namespace, ",
+                "       StudentAssessmentIdentifier, ",
+                "       StudentSchoolKey, ",
+                "       Result, ",
+                "       MaxRawScore, ",
+                "       PerformanceLevel, ",
+                "       ResultDatatype",
+                "FROM ",
+                "     BI.[amt.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult];"
               ],
               "dataSource": "EdFi ODS"
             },
@@ -4932,8 +5016,19 @@
               {
                 "name": "QueryEditorSerialization",
                 "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [bi].[eq24.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult].*",
-                  " FROM [bi].[eq24.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT ",
+                  "       AssessmentIdentifier, ",
+                  "       ReportingMethod, ",
+                  "       ObjectiveDescription, ",
+                  "       Namespace, ",
+                  "       StudentAssessmentIdentifier, ",
+                  "       StudentSchoolKey, ",
+                  "       Result, ",
+                  "       MaxRawScore, ",
+                  "       PerformanceLevel, ",
+                  "       ResultDatatype",
+                  "FROM ",
+                  "     BI.[amt.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult];</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
                 ]
               }
             ]
@@ -4996,8 +5091,19 @@
           {
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
-              "SELECT [bi].[eq24.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult].*",
-              " FROM [bi].[eq24.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult]"
+              "SELECT ",
+              "       AssessmentIdentifier, ",
+              "       ReportingMethod, ",
+              "       ObjectiveDescription, ",
+              "       Namespace, ",
+              "       StudentAssessmentIdentifier, ",
+              "       StudentSchoolKey, ",
+              "       Result, ",
+              "       MaxRawScore, ",
+              "       PerformanceLevel, ",
+              "       ResultDatatype",
+              "FROM ",
+              "     BI.[amt.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult];"
             ]
           },
           {
@@ -5011,8 +5117,19 @@
           {
             "name": "QueryEditorSerialization",
             "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [bi].[eq24.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult].*",
-              " FROM [bi].[eq24.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT ",
+              "       AssessmentIdentifier, ",
+              "       ReportingMethod, ",
+              "       ObjectiveDescription, ",
+              "       Namespace, ",
+              "       StudentAssessmentIdentifier, ",
+              "       StudentSchoolKey, ",
+              "       Result, ",
+              "       MaxRawScore, ",
+              "       PerformanceLevel, ",
+              "       ResultDatatype",
+              "FROM ",
+              "     BI.[amt.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult];</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -5053,18 +5170,6 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "AssessmentReportingMethod",
-            "dataType": "string",
-            "sourceColumn": "AssessmentReportingMethod",
-            "sourceProviderType": "WChar"
-          },
-          {
-            "name": "AssessmentTitle",
-            "dataType": "string",
-            "sourceColumn": "AssessmentTitle",
-            "sourceProviderType": "WChar"
-          },
-          {
             "name": "Result",
             "dataType": "string",
             "sourceColumn": "Result",
@@ -5084,9 +5189,18 @@
           },
           {
             "name": "StudentSchoolKey",
-            "dataType": "int64",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
+            "dataType": "string",
+            "sourceColumn": "StudentSchoolKey"
+          },
+          {
+            "name": "ReportingMethod",
+            "dataType": "string",
+            "sourceColumn": "ReportingMethod"
+          },
+          {
+            "name": "Title",
+            "dataType": "string",
+            "sourceColumn": "Title"
           }
         ],
         "partitions": [
@@ -5096,8 +5210,18 @@
             "source": {
               "type": "query",
               "query": [
-                "SELECT [bi].[eq24.iReady_StudentAssessmentReportingMethod].*",
-                " FROM [bi].[eq24.iReady_StudentAssessmentReportingMethod]"
+                "SELECT AssessmentIdentifier",
+                "      ,StudentAssessmentIdentifier",
+                "      ,StudentSchoolKey",
+                "      ,AdministrationDate",
+                "      ,WhenAssessedGradeLevel",
+                "      ,AcademicSubject",
+                "      ,ReportingMethod",
+                "      ,Title",
+                "      ,Result",
+                "      ,Version",
+                "      ,Namespace",
+                "  FROM BI.[amt.iReady_StudentAssessmentReportingMethod]"
               ],
               "dataSource": "EdFi ODS"
             },
@@ -5105,8 +5229,18 @@
               {
                 "name": "QueryEditorSerialization",
                 "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [bi].[eq24.iReady_StudentAssessmentReportingMethod].*",
-                  " FROM [bi].[eq24.iReady_StudentAssessmentReportingMethod]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT AssessmentIdentifier",
+                  "      ,StudentAssessmentIdentifier",
+                  "      ,StudentSchoolKey",
+                  "      ,AdministrationDate",
+                  "      ,WhenAssessedGradeLevel",
+                  "      ,AcademicSubject",
+                  "      ,ReportingMethod",
+                  "      ,Title",
+                  "      ,Result",
+                  "      ,Version",
+                  "      ,Namespace",
+                  "  FROM BI.[amt.iReady_StudentAssessmentReportingMethod]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
                 ]
               }
             ]
@@ -5116,8 +5250,18 @@
           {
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
-              "SELECT [bi].[eq24.iReady_StudentAssessmentReportingMethod].*",
-              " FROM [bi].[eq24.iReady_StudentAssessmentReportingMethod]"
+              "SELECT AssessmentIdentifier",
+              "      ,StudentAssessmentIdentifier",
+              "      ,StudentSchoolKey",
+              "      ,AdministrationDate",
+              "      ,WhenAssessedGradeLevel",
+              "      ,AcademicSubject",
+              "      ,ReportingMethod",
+              "      ,Title",
+              "      ,Result",
+              "      ,Version",
+              "      ,Namespace",
+              "  FROM BI.[amt.iReady_StudentAssessmentReportingMethod]"
             ]
           },
           {
@@ -5131,8 +5275,18 @@
           {
             "name": "QueryEditorSerialization",
             "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [bi].[eq24.iReady_StudentAssessmentReportingMethod].*",
-              " FROM [bi].[eq24.iReady_StudentAssessmentReportingMethod]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT AssessmentIdentifier",
+              "      ,StudentAssessmentIdentifier",
+              "      ,StudentSchoolKey",
+              "      ,AdministrationDate",
+              "      ,WhenAssessedGradeLevel",
+              "      ,AcademicSubject",
+              "      ,ReportingMethod",
+              "      ,Title",
+              "      ,Result",
+              "      ,Version",
+              "      ,Namespace",
+              "  FROM BI.[amt.iReady_StudentAssessmentReportingMethod]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -5191,18 +5345,6 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "AssessmentReportingMethod",
-            "dataType": "string",
-            "sourceColumn": "AssessmentReportingMethod",
-            "sourceProviderType": "WChar"
-          },
-          {
-            "name": "AssessmentTitle",
-            "dataType": "string",
-            "sourceColumn": "AssessmentTitle",
-            "sourceProviderType": "WChar"
-          },
-          {
             "name": "Result",
             "dataType": "int64",
             "sourceColumn": "Result",
@@ -5227,7 +5369,7 @@
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              " LOOKUPVALUE('iReady_StudentAssessmentReportingMethod'[Result],'iReady_StudentAssessmentReportingMethod'[AssessmentReportingMethod],\"Proficiency level\",",
+              " LOOKUPVALUE('iReady_StudentAssessmentReportingMethod'[Result],'iReady_StudentAssessmentReportingMethod'[ReportingMethod],\"Proficiency level\",",
               "                                                             'iReady_StudentAssessmentReportingMethod'[StudentAssessmentIdentifier],'iReady_StudentAssessmentScoreResult'[StudentAssessmentIdentifier])  ",
               ""
             ]
@@ -5238,7 +5380,7 @@
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              " LOOKUPVALUE('iReady_StudentAssessmentReportingMethod'[Result],'iReady_StudentAssessmentReportingMethod'[AssessmentReportingMethod],\"Quantile Measure\",",
+              " LOOKUPVALUE('iReady_StudentAssessmentReportingMethod'[Result],'iReady_StudentAssessmentReportingMethod'[ReportingMethod],\"Quantile Measure\",",
               "                                                             'iReady_StudentAssessmentReportingMethod'[StudentAssessmentIdentifier],'iReady_StudentAssessmentScoreResult'[StudentAssessmentIdentifier]) "
             ]
           },
@@ -5248,7 +5390,7 @@
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              " LOOKUPVALUE('iReady_StudentAssessmentReportingMethod'[Result],'iReady_StudentAssessmentReportingMethod'[AssessmentReportingMethod],\"Time on Task (minutes)\",",
+              " LOOKUPVALUE('iReady_StudentAssessmentReportingMethod'[Result],'iReady_StudentAssessmentReportingMethod'[ReportingMethod],\"Time on Task (minutes)\",",
               "                                                             'iReady_StudentAssessmentReportingMethod'[StudentAssessmentIdentifier],'iReady_StudentAssessmentScoreResult'[StudentAssessmentIdentifier]) "
             ]
           },
@@ -5258,7 +5400,7 @@
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              " LOOKUPVALUE('iReady_StudentAssessmentReportingMethod'[Result],'iReady_StudentAssessmentReportingMethod'[AssessmentReportingMethod],\"Quantile Range\",",
+              " LOOKUPVALUE('iReady_StudentAssessmentReportingMethod'[Result],'iReady_StudentAssessmentReportingMethod'[ReportingMethod],\"Quantile Range\",",
               "                                                             'iReady_StudentAssessmentReportingMethod'[StudentAssessmentIdentifier],",
               "                                                             'iReady_StudentAssessmentScoreResult'[StudentAssessmentIdentifier]) "
             ]
@@ -5269,7 +5411,7 @@
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              " LOOKUPVALUE('iReady_StudentAssessmentReportingMethod'[Result],'iReady_StudentAssessmentReportingMethod'[AssessmentReportingMethod],\"Annual Typical Growth Measure\",",
+              " LOOKUPVALUE('iReady_StudentAssessmentReportingMethod'[Result],'iReady_StudentAssessmentReportingMethod'[ReportingMethod],\"Annual Typical Growth Measure\",",
               "                                                             'iReady_StudentAssessmentReportingMethod'[StudentAssessmentIdentifier],'iReady_StudentAssessmentScoreResult'[StudentAssessmentIdentifier]) "
             ]
           },
@@ -5279,7 +5421,7 @@
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              " LOOKUPVALUE('iReady_StudentAssessmentReportingMethod'[Result],'iReady_StudentAssessmentReportingMethod'[AssessmentReportingMethod],\"Annual Stretch Growth Measure\",",
+              " LOOKUPVALUE('iReady_StudentAssessmentReportingMethod'[Result],'iReady_StudentAssessmentReportingMethod'[ReportingMethod],\"Annual Stretch Growth Measure\",",
               "                                                             'iReady_StudentAssessmentReportingMethod'[StudentAssessmentIdentifier],'iReady_StudentAssessmentScoreResult'[StudentAssessmentIdentifier]) "
             ]
           },
@@ -5289,7 +5431,7 @@
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              " LOOKUPVALUE('iReady_StudentAssessmentReportingMethod'[Result],'iReady_StudentAssessmentReportingMethod'[AssessmentReportingMethod],\"Mid On Grade Level Scale Score\",",
+              " LOOKUPVALUE('iReady_StudentAssessmentReportingMethod'[Result],'iReady_StudentAssessmentReportingMethod'[ReportingMethod],\"Mid On Grade Level Scale Score\",",
               "                                                             'iReady_StudentAssessmentReportingMethod'[StudentAssessmentIdentifier],'iReady_StudentAssessmentScoreResult'[StudentAssessmentIdentifier]) "
             ]
           },
@@ -5300,7 +5442,7 @@
             "isDataTypeInferred": true,
             "expression": [
               "",
-              "         [StudentSchoolKey]",
+              "[StudentSchoolKey]",
               " & \"^\" & [AssessmentIdentifier]",
               " & \"^\" & [StudentAssessmentIdentifier]"
             ]
@@ -5322,17 +5464,26 @@
             ]
           },
           {
-            "name": "StudentSchoolKey",
-            "dataType": "int64",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
-          },
-          {
             "type": "calculated",
             "name": "Current School Key",
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": "RELATED(Student[Current School ID])"
+          },
+          {
+            "name": "StudentSchoolKey",
+            "dataType": "string",
+            "sourceColumn": "StudentSchoolKey"
+          },
+          {
+            "name": "ReportingMethod",
+            "dataType": "string",
+            "sourceColumn": "ReportingMethod"
+          },
+          {
+            "name": "Title",
+            "dataType": "string",
+            "sourceColumn": "Title"
           }
         ],
         "partitions": [
@@ -5342,8 +5493,20 @@
             "source": {
               "type": "query",
               "query": [
-                "SELECT [bi].[eq24.iReady_StudentAssessmentScoreResult].* ",
-                "FROM [bi].[eq24.iReady_StudentAssessmentScoreResult]"
+                "SELECT AssessmentIdentifier, ",
+                "       StudentAssessmentIdentifier, ",
+                "       StudentSchoolKey, ",
+                "       AdministrationDate, ",
+                "       AdministrationEndDate, ",
+                "       WhenAssessedGradeLevel, ",
+                "       AcademicSubject, ",
+                "       ReportingMethod, ",
+                "       Title, ",
+                "       Result, ",
+                "       Version, ",
+                "       Namespace",
+                "FROM ",
+                "     BI.[amt.iReady_StudentAssessmentScoreResult];"
               ],
               "dataSource": "EdFi ODS"
             },
@@ -5351,8 +5514,20 @@
               {
                 "name": "QueryEditorSerialization",
                 "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [bi].[eq24.iReady_StudentAssessmentScoreResult].* ",
-                  "FROM [bi].[eq24.iReady_StudentAssessmentScoreResult]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT AssessmentIdentifier, ",
+                  "       StudentAssessmentIdentifier, ",
+                  "       StudentSchoolKey, ",
+                  "       AdministrationDate, ",
+                  "       AdministrationEndDate, ",
+                  "       WhenAssessedGradeLevel, ",
+                  "       AcademicSubject, ",
+                  "       ReportingMethod, ",
+                  "       Title, ",
+                  "       Result, ",
+                  "       Version, ",
+                  "       Namespace",
+                  "FROM ",
+                  "     BI.[amt.iReady_StudentAssessmentScoreResult];</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
                 ]
               }
             ]
@@ -5362,8 +5537,20 @@
           {
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
-              "SELECT [bi].[eq24.iReady_StudentAssessmentScoreResult].* ",
-              "FROM [bi].[eq24.iReady_StudentAssessmentScoreResult]"
+              "SELECT AssessmentIdentifier, ",
+              "       StudentAssessmentIdentifier, ",
+              "       StudentSchoolKey, ",
+              "       AdministrationDate, ",
+              "       AdministrationEndDate, ",
+              "       WhenAssessedGradeLevel, ",
+              "       AcademicSubject, ",
+              "       ReportingMethod, ",
+              "       Title, ",
+              "       Result, ",
+              "       Version, ",
+              "       Namespace",
+              "FROM ",
+              "     BI.[amt.iReady_StudentAssessmentScoreResult];"
             ]
           },
           {
@@ -5377,8 +5564,20 @@
           {
             "name": "QueryEditorSerialization",
             "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [bi].[eq24.iReady_StudentAssessmentScoreResult].* ",
-              "FROM [bi].[eq24.iReady_StudentAssessmentScoreResult]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT AssessmentIdentifier, ",
+              "       StudentAssessmentIdentifier, ",
+              "       StudentSchoolKey, ",
+              "       AdministrationDate, ",
+              "       AdministrationEndDate, ",
+              "       WhenAssessedGradeLevel, ",
+              "       AcademicSubject, ",
+              "       ReportingMethod, ",
+              "       Title, ",
+              "       Result, ",
+              "       Version, ",
+              "       Namespace",
+              "FROM ",
+              "     BI.[amt.iReady_StudentAssessmentScoreResult];</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -5406,12 +5605,6 @@
             "sourceProviderType": "WChar"
           },
           {
-            "name": "ObjejctiveDescription",
-            "dataType": "string",
-            "sourceColumn": "ObjejctiveDescription",
-            "sourceProviderType": "WChar"
-          },
-          {
             "name": "Namespace",
             "dataType": "string",
             "sourceColumn": "Namespace",
@@ -5436,10 +5629,14 @@
             "sourceProviderType": "WChar"
           },
           {
+            "name": "ObjectiveDescription",
+            "dataType": "string",
+            "sourceColumn": "ObjectiveDescription"
+          },
+          {
             "name": "StudentSchoolKey",
-            "dataType": "int64",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
+            "dataType": "string",
+            "sourceColumn": "StudentSchoolKey"
           }
         ],
         "partitions": [
@@ -5449,8 +5646,16 @@
             "source": {
               "type": "query",
               "query": [
-                "SELECT [bi].[eq24.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel].*",
-                " FROM [bi].[eq24.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel]"
+                "SELECT AssessmentIdentifier",
+                "      ,ReportingMethod",
+                "      ,IdentificationCode",
+                "      ,ObjectiveDescription",
+                "      ,Namespace",
+                "      ,StudentAssessmentIdentifier",
+                "      ,StudentSchoolKey",
+                "      ,Result",
+                "      ,ResultDataType",
+                "  FROM BI.[amt.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel]"
               ],
               "dataSource": "EdFi ODS"
             },
@@ -5458,8 +5663,16 @@
               {
                 "name": "QueryEditorSerialization",
                 "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [bi].[eq24.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel].*",
-                  " FROM [bi].[eq24.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT AssessmentIdentifier",
+                  "      ,ReportingMethod",
+                  "      ,IdentificationCode",
+                  "      ,ObjectiveDescription",
+                  "      ,Namespace",
+                  "      ,StudentAssessmentIdentifier",
+                  "      ,StudentSchoolKey",
+                  "      ,Result",
+                  "      ,ResultDataType",
+                  "  FROM BI.[amt.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
                 ]
               }
             ]
@@ -5469,8 +5682,16 @@
           {
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
-              "SELECT [bi].[eq24.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel].*",
-              " FROM [bi].[eq24.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel]"
+              "SELECT AssessmentIdentifier",
+              "      ,ReportingMethod",
+              "      ,IdentificationCode",
+              "      ,ObjectiveDescription",
+              "      ,Namespace",
+              "      ,StudentAssessmentIdentifier",
+              "      ,StudentSchoolKey",
+              "      ,Result",
+              "      ,ResultDataType",
+              "  FROM BI.[amt.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel]"
             ]
           },
           {
@@ -5484,8 +5705,16 @@
           {
             "name": "QueryEditorSerialization",
             "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [bi].[eq24.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel].*",
-              " FROM [bi].[eq24.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT AssessmentIdentifier",
+              "      ,ReportingMethod",
+              "      ,IdentificationCode",
+              "      ,ObjectiveDescription",
+              "      ,Namespace",
+              "      ,StudentAssessmentIdentifier",
+              "      ,StudentSchoolKey",
+              "      ,Result",
+              "      ,ResultDataType",
+              "  FROM BI.[amt.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -5542,9 +5771,13 @@
             "dataType": "string",
             "isDataTypeInferred": true,
             "expression": [
-              " LOOKUPVALUE('iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel'[Result]",
-              ",'iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel'[StudentAssessmentIdentifier],'iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult'[StudentAssessmentIdentifier]",
-              ",'iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel'[IdentificationCode],'iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult'[IdentificationCode])"
+              "LOOKUPVALUE (",
+              "    'iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel'[Result],",
+              "    'iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel'[StudentAssessmentIdentifier],",
+              "        'iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult'[StudentAssessmentIdentifier],",
+              "    'iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel'[IdentificationCode],",
+              "        'iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult'[IdentificationCode]",
+              ")"
             ]
           },
           {
@@ -5566,9 +5799,8 @@
           },
           {
             "name": "StudentSchoolKey",
-            "dataType": "int64",
-            "sourceColumn": "StudentUSI",
-            "sourceProviderType": "Integer"
+            "dataType": "string",
+            "sourceColumn": "StudentSchoolKey"
           }
         ],
         "partitions": [
@@ -5578,16 +5810,16 @@
             "source": {
               "type": "query",
               "query": [
-                "SELECT [AssessmentIdentifier]",
-                "      ,[ReportingMethod]",
-                "      ,[IdentificationCode]",
-                "      ,[ObjectiveDescription]",
-                "      ,[Namespace]",
-                "      ,[StudentAssessmentIdentifier]",
-                "      ,[StudentUSI]",
-                "      ,[Result]",
-                "      ,[ResultDatatype]",
-                "  FROM [bi].[eq24.iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult]"
+                "SELECT AssessmentIdentifier",
+                "      ,ReportingMethod",
+                "      ,IdentificationCode",
+                "      ,ObjectiveDescription",
+                "      ,Namespace",
+                "      ,StudentAssessmentIdentifier",
+                "      ,StudentSchoolKey",
+                "      ,Result",
+                "      ,ResultDataType",
+                "  FROM BI.[amt.iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult]"
               ],
               "dataSource": "EdFi ODS"
             },
@@ -5595,16 +5827,16 @@
               {
                 "name": "QueryEditorSerialization",
                 "value": [
-                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [AssessmentIdentifier]",
-                  "      ,[ReportingMethod]",
-                  "      ,[IdentificationCode]",
-                  "      ,[ObjectiveDescription]",
-                  "      ,[Namespace]",
-                  "      ,[StudentAssessmentIdentifier]",
-                  "      ,[StudentUSI]",
-                  "      ,[Result]",
-                  "      ,[ResultDatatype]",
-                  "  FROM [bi].[eq24.iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+                  "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT AssessmentIdentifier",
+                  "      ,ReportingMethod",
+                  "      ,IdentificationCode",
+                  "      ,ObjectiveDescription",
+                  "      ,Namespace",
+                  "      ,StudentAssessmentIdentifier",
+                  "      ,StudentSchoolKey",
+                  "      ,Result",
+                  "      ,ResultDataType",
+                  "  FROM BI.[amt.iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
                 ]
               }
             ]
@@ -5614,16 +5846,16 @@
           {
             "name": "_TM_ExtProp_QueryDefinition",
             "value": [
-              "SELECT [AssessmentIdentifier]",
-              "      ,[ReportingMethod]",
-              "      ,[IdentificationCode]",
-              "      ,[ObjectiveDescription]",
-              "      ,[Namespace]",
-              "      ,[StudentAssessmentIdentifier]",
-              "      ,[StudentUSI]",
-              "      ,[Result]",
-              "      ,[ResultDatatype]",
-              "  FROM [bi].[eq24.iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult]"
+              "SELECT AssessmentIdentifier",
+              "      ,ReportingMethod",
+              "      ,IdentificationCode",
+              "      ,ObjectiveDescription",
+              "      ,Namespace",
+              "      ,StudentAssessmentIdentifier",
+              "      ,StudentSchoolKey",
+              "      ,Result",
+              "      ,ResultDataType",
+              "  FROM BI.[amt.iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult]"
             ]
           },
           {
@@ -5637,16 +5869,16 @@
           {
             "name": "QueryEditorSerialization",
             "value": [
-              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT [AssessmentIdentifier]",
-              "      ,[ReportingMethod]",
-              "      ,[IdentificationCode]",
-              "      ,[ObjectiveDescription]",
-              "      ,[Namespace]",
-              "      ,[StudentAssessmentIdentifier]",
-              "      ,[StudentUSI]",
-              "      ,[Result]",
-              "      ,[ResultDatatype]",
-              "  FROM [bi].[eq24.iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
+              "<?xml version=\"1.0\" encoding=\"UTF-16\"?><Gemini xmlns=\"QueryEditorSerialization\"><AnnotationContent><![CDATA[<RSQueryCommandText>SELECT AssessmentIdentifier",
+              "      ,ReportingMethod",
+              "      ,IdentificationCode",
+              "      ,ObjectiveDescription",
+              "      ,Namespace",
+              "      ,StudentAssessmentIdentifier",
+              "      ,StudentSchoolKey",
+              "      ,Result",
+              "      ,ResultDataType",
+              "  FROM BI.[amt.iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult]</RSQueryCommandText><RSQueryCommandType>Text</RSQueryCommandType><RSQueryDesignState></RSQueryDesignState>]]></AnnotationContent></Gemini>"
             ]
           }
         ]
@@ -6400,20 +6632,6 @@
         "crossFilteringBehavior": "bothDirections"
       },
       {
-        "name": "68cd1e13-9202-4503-87aa-784a96ca7dd7",
-        "fromTable": "MC_StudentAssessmentStudentObjectiveAssessmentScoreResult",
-        "fromColumn": "ObjectiveAssessmentKey",
-        "toTable": "MC_StudentAssessmentScoreResult",
-        "toColumn": "ObjectiveAssessmentKey"
-      },
-      {
-        "name": "b3598b49-8d01-4c7d-8113-339c92a6da2a",
-        "fromTable": "iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult",
-        "fromColumn": "ObjectiveAssessmentKey",
-        "toTable": "iReady_StudentAssessmentScoreResult",
-        "toColumn": "ObjectiveAssessmentKey"
-      },
-      {
         "name": "e8936bb9-0d35-4fab-9f3e-87ec444482b6",
         "fromTable": "StudentAssessmentScoreResult",
         "fromColumn": "KeyStudentAssessment",
@@ -6444,30 +6662,6 @@
         "toColumn": "SectionKey"
       },
       {
-        "name": "e562f717-a26c-4b45-a735-f107c054df41",
-        "fromTable": "StudentCourseCurrent",
-        "fromColumn": "StudentSectionKey",
-        "toTable": "StudentSectionAssociation",
-        "toColumn": "StudentSectionKey",
-        "crossFilteringBehavior": "bothDirections"
-      },
-      {
-        "name": "a2125f52-ce7b-49f2-b3f1-036f35ad90dd",
-        "fromTable": "iReady_StudentAssessmentScoreResult",
-        "fromColumn": "StudentSchoolKey",
-        "toTable": "Student",
-        "toColumn": "StudentSchoolKey",
-        "crossFilteringBehavior": "bothDirections"
-      },
-      {
-        "name": "239da02c-cef8-4fe4-9d23-6f4039b32434",
-        "fromTable": "MC_StudentAssessmentScoreResult",
-        "fromColumn": "StudentSchoolKey",
-        "toTable": "Student",
-        "toColumn": "StudentSchoolKey",
-        "crossFilteringBehavior": "bothDirections"
-      },
-      {
         "name": "70b885ec-d280-414a-8f5e-3ee437c52596",
         "fromTable": "StudentAssessmentScoreResult",
         "fromColumn": "StudentSchoolKey",
@@ -6488,6 +6682,51 @@
         "fromColumn": "StudentSchoolKey",
         "toTable": "Student",
         "toColumn": "StudentSchoolKey",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "7dbcb91c-78d9-45e7-b2b7-a0f9e6249a8f",
+        "fromTable": "iReady_StudentAssessmentScoreResult",
+        "fromColumn": "StudentSchoolKey",
+        "toTable": "Student",
+        "toColumn": "StudentSchoolKey",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "10c9bcf6-97c3-42fd-b669-ccbbd795fc8f",
+        "fromTable": "iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult",
+        "fromColumn": "ObjectiveAssessmentKey",
+        "toTable": "iReady_StudentAssessmentScoreResult",
+        "toColumn": "ObjectiveAssessmentKey"
+      },
+      {
+        "name": "96d6247a-afa5-4a3a-96d9-94b8539ac7ee",
+        "fromTable": "MC_StudentAssessmentStudentObjectiveAssessmentScoreResult",
+        "fromColumn": "ObjectiveAssessmentKey",
+        "toTable": "MC_StudentAssessmentScoreResult",
+        "toColumn": "ObjectiveAssessmentKey"
+      },
+      {
+        "name": "662cdd39-095b-4fbc-876b-6ffd7de998a3",
+        "fromTable": "MC_StudentAssessmentScoreResult",
+        "fromColumn": "StudentSchoolKey",
+        "toTable": "Student",
+        "toColumn": "StudentSchoolKey",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "f6c8c16a-d870-46fb-b35a-7f83d8028a4d",
+        "fromTable": "StaffEducationOrganizationAssignmentAssociation",
+        "fromColumn": "SchoolKey",
+        "toTable": "School",
+        "toColumn": "SchoolKey"
+      },
+      {
+        "name": "782a0042-295c-493f-9ded-b5e0a12efb0f",
+        "fromTable": "StudentCourseCurrent",
+        "fromColumn": "StudentSectionKey",
+        "toTable": "StudentSectionAssociation",
+        "toColumn": "StudentSectionKey",
         "crossFilteringBehavior": "bothDirections"
       }
     ],
