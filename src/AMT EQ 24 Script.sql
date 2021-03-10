@@ -88,14 +88,15 @@ AS
 --WHERE    SUBSTRING(g.LocalCourseCode,11,2) in ( '12') --this filter selects math courses only for Florida districts.
 
 GO
-/****** Object:  View [BI].[amt.iReady_StudentAssessmentReportingMethod]    Script Date: 3/8/2021 3:15:18 PM ******/
+/****** Object:  View [BI].[amt.iReady_StudentAssessmentReportingMethod]    Script Date: 3/10/2021 10:10:45 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE VIEW [BI].[amt.iReady_StudentAssessmentReportingMethod]
 AS
-    SELECT 
+    SELECT DISTINCT 
            sa.AssessmentIdentifier, 
            sa.StudentAssessmentIdentifier, 
            sa.StudentSchoolKey, 
@@ -105,28 +106,31 @@ AS
            sa.ReportingMethod, 
            aaf.Title, 
            sa.StudentScore AS Result, 
-           '' Version, 
+           aaf.Version Version, 
            sa.Namespace
     FROM 
-         analytics.asmt_StudentAssessmentFact sa
+         analytics.asmt_StudentAssessmentFact2 sa
     INNER JOIN
         analytics.asmt_AssessmentFact aaf ON
             sa.AssessmentKey = aaf.AssessmentKey
+            AND
+            sa.ObjectiveAssessmentKey = aaf.ObjectiveAssessmentKey
     WHERE
-            sa.Namespace = 'http://www.curriculumassociates.com/Descriptor/Assessment.xml'
+            sa.Namespace LIKE 'uri://www.curriculumassociates.com%'
             AND
             aaf.AcademicSubject = 'Mathematics'
             AND
             sa.ReportingMethod <> 'Scale score';
 GO
-/****** Object:  View [BI].[amt.iReady_StudentAssessmentScoreResult]    Script Date: 3/8/2021 3:15:18 PM ******/
+/****** Object:  View [BI].[amt.iReady_StudentAssessmentScoreResult]    Script Date: 3/10/2021 10:10:45 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE VIEW [BI].[amt.iReady_StudentAssessmentScoreResult]
 AS
-    SELECT 
+    SELECT DISTINCT 
            sa.AssessmentIdentifier, 
            sa.StudentAssessmentIdentifier, 
            sa.StudentSchoolKey, 
@@ -137,28 +141,32 @@ AS
            sa.ReportingMethod, 
            aaf.Title, 
            sa.StudentScore AS Result, 
-           '' Version, 
+           aaf.Version Version, 
            sa.Namespace
     FROM 
-         analytics.asmt_StudentAssessmentFact sa
+         analytics.asmt_StudentAssessmentFact2 sa
     INNER JOIN
         analytics.asmt_AssessmentFact aaf ON
             sa.AssessmentKey = aaf.AssessmentKey
+            AND
+            sa.ObjectiveAssessmentKey = aaf.ObjectiveAssessmentKey
     WHERE
-            sa.Namespace = 'http://www.curriculumassociates.com/Descriptor/Assessment.xml'
+            sa.Namespace like 'uri://www.curriculumassociates.com%'
             AND
             aaf.AcademicSubject = 'Mathematics'
             AND
-            sa.ResultDataType = 'Scale score';
+            sa.ReportingMethod = 'Scale score';
 GO
-/****** Object:  View [BI].[amt.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel]    Script Date: 3/8/2021 3:15:18 PM ******/
+/****** Object:  View [BI].[amt.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel]    Script Date: 3/10/2021 10:10:45 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 CREATE VIEW [BI].[amt.iReady_StudentAssessmentStudentObjectiveAssessmentPerformanceLevel]
 AS
-    SELECT 
+    SELECT DISTINCT 
            sa.AssessmentIdentifier, 
            sa.ReportingMethod, 
            aaf.IdentificationCode, 
@@ -169,23 +177,26 @@ AS
            sa.StudentScore AS Result, 
            sa.ResultDataType
     FROM 
-         analytics.asmt_StudentAssessmentFact sa
+         analytics.asmt_StudentAssessmentFact2 sa
     INNER JOIN
         analytics.asmt_AssessmentFact aaf ON
             sa.AssessmentKey = aaf.AssessmentKey
+            AND
+            sa.ObjectiveAssessmentKey = aaf.ObjectiveAssessmentKey
     WHERE
-          sa.Namespace LIKE 'http://www.curriculumassociates.com%'
+          sa.Namespace LIKE 'uri://www.curriculumassociates.com%'
           AND
-            sa.ReportingMethod = 'Level';
+            sa.ResultDataType = 'Level';
 GO
-/****** Object:  View [BI].[amt.iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult]    Script Date: 3/8/2021 3:15:18 PM ******/
+/****** Object:  View [BI].[amt.iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult]    Script Date: 3/10/2021 10:10:45 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE VIEW [BI].[amt.iReady_StudentAssessmentStudentObjectiveAssessmentScoreResult]
 AS
-    SELECT 
+    SELECT DISTINCT 
            sa.AssessmentIdentifier, 
            sa.ReportingMethod, 
            aaf.IdentificationCode, 
@@ -196,22 +207,26 @@ AS
            sa.StudentScore AS Result, 
            sa.ResultDataType
     FROM 
-         analytics.asmt_StudentAssessmentFact sa
+         analytics.asmt_StudentAssessmentFact2 sa
     INNER JOIN
         analytics.asmt_AssessmentFact aaf ON
             sa.AssessmentKey = aaf.AssessmentKey
+            AND
+            sa.ObjectiveAssessmentKey = aaf.ObjectiveAssessmentKey
     WHERE
-          sa.Namespace LIKE 'http://www.curriculumassociates.com%'
+          sa.Namespace LIKE 'uri://www.curriculumassociates.com%'
           AND sa.ResultDataType LIKE 'Integer';
+--GO
+
 GO
-/****** Object:  View [BI].[amt.MC_ObjectiveAssessmentPerformanceLevel]    Script Date: 3/8/2021 3:15:18 PM ******/
+/****** Object:  View [BI].[amt.MC_ObjectiveAssessmentPerformanceLevel]    Script Date: 3/10/2021 10:10:45 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE VIEW [BI].[amt.MC_ObjectiveAssessmentPerformanceLevel]
 AS
-    SELECT 
+    SELECT DISTINCT 
            sa.AssessmentIdentifier, 
            sa.ReportingMethod, 
            aaf.IdentificationCode, 
@@ -221,21 +236,23 @@ AS
            aaf.MaxScore AS MaximumScore, 
            sa.ResultDataType
     FROM 
-         analytics.asmt_StudentAssessmentFact sa
+         analytics.asmt_StudentAssessmentFact2 sa
     INNER JOIN
         analytics.asmt_AssessmentFact aaf ON
             sa.AssessmentKey = aaf.AssessmentKey
+            AND
+            sa.ObjectiveAssessmentKey = aaf.ObjectiveAssessmentKey
     WHERE
             sa.Namespace = 'http://masteryconnect.com';
 GO
-/****** Object:  View [BI].[amt.MC_StudentAssessmentScoreResult]    Script Date: 3/8/2021 3:15:18 PM ******/
+/****** Object:  View [BI].[amt.MC_StudentAssessmentScoreResult]    Script Date: 3/10/2021 10:10:45 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE VIEW [BI].[amt.MC_StudentAssessmentScoreResult]
 AS
-    SELECT 
+    SELECT DISTINCT 
            sa.AssessmentIdentifier, 
            sa.StudentAssessmentIdentifier, 
            sa.StudentSchoolKey, 
@@ -244,48 +261,46 @@ AS
            sa.ReportingMethod, 
            aaf.Title, 
            sa.StudentScore AS Result, 
-           '' AS Version, 
+           aaf.Version AS Version, 
            sa.Namespace
     FROM 
-         analytics.asmt_StudentAssessmentFact sa
+         analytics.asmt_StudentAssessmentFact2 sa
     INNER JOIN
         analytics.asmt_AssessmentFact aaf ON
             sa.AssessmentKey = aaf.AssessmentKey
+            AND
+            sa.ObjectiveAssessmentKey = aaf.ObjectiveAssessmentKey
     WHERE
             sa.Namespace = 'http://masteryconnect.com';
 GO
-/****** Object:  View [BI].[amt.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult]    Script Date: 3/8/2021 3:15:18 PM ******/
+/****** Object:  View [BI].[amt.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult]    Script Date: 3/10/2021 10:10:45 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
 CREATE VIEW [BI].[amt.MC_StudentAssessmentStudentObjectiveAssessmentScoreResult]
-
 AS
-
-SELECT 
-       sa.AssessmentIdentifier, 
-       sa.ReportingMethod, 
-       aaf.ObjectiveAssessmentDescription AS ObjectiveDescription, 
-       sa.Namespace, 
-       sa.StudentAssessmentIdentifier, 
-       StudentSchoolKey, 
-       StudentScore AS Result, 
-       MaxScore AS MaxRawScore, 
-       sa.PerformanceResult PerformanceLevel, 
-       sa.ResultDatatype
-FROM 
-     analytics.asmt_StudentAssessmentFact sa
-INNER JOIN
-    analytics.asmt_AssessmentFact aaf ON
-        sa.AssessmentKey = aaf.AssessmentKey
-WHERE sa.Namespace = 'http://masteryconnect.com';
+    SELECT DISTINCT 
+           sa.AssessmentIdentifier, 
+           sa.ReportingMethod, 
+           aaf.ObjectiveAssessmentDescription AS ObjectiveDescription, 
+           sa.Namespace, 
+           sa.StudentAssessmentIdentifier, 
+           StudentSchoolKey, 
+           StudentScore AS Result, 
+           MaxScore AS MaxRawScore, 
+           sa.PerformanceResult PerformanceLevel, 
+           sa.ResultDatatype
+    FROM 
+         analytics.asmt_StudentAssessmentFact2 sa
+    INNER JOIN
+        analytics.asmt_AssessmentFact aaf ON
+            sa.AssessmentKey = aaf.AssessmentKey
+            AND
+            sa.ObjectiveAssessmentKey = aaf.ObjectiveAssessmentKey
+    WHERE
+            sa.Namespace = 'http://masteryconnect.com';
+GO
 GO
 /****** Object:  View [BI].[amt.School]    Script Date: 3/8/2021 3:15:18 PM ******/
 SET ANSI_NULLS ON
